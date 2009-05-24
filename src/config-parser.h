@@ -83,8 +83,12 @@
      USERNAME = 299,
      USER = 300,
      VHOST = 301,
-     NUMBER = 302,
-     STRING = 303
+     AKILL = 302,
+     CYBNICK = 303,
+     CYBHOST = 304,
+     CYBIDENT = 305,
+     NUMBER = 306,
+     STRING = 307
    };
 #endif
 /* Tokens.  */
@@ -132,21 +136,25 @@
 #define USERNAME 299
 #define USER 300
 #define VHOST 301
-#define NUMBER 302
-#define STRING 303
+#define AKILL 302
+#define CYBNICK 303
+#define CYBHOST 304
+#define CYBIDENT 305
+#define NUMBER 306
+#define STRING 307
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 82 "config-parser.y"
+#line 85 "config-parser.y"
 {
         int number;
         char *string;
 }
-/* Line 1529 of yacc.c.  */
-#line 150 "y.tab.h"
+/* Line 1489 of yacc.c.  */
+#line 158 "config-parser.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

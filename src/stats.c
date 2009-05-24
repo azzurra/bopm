@@ -138,7 +138,10 @@ void stats_connect(void)
    STATS_CONNECTIONS++;
 }
 
-
+unsigned int getConnections(void)
+{
+   return STATS_CONNECTIONS;
+}
 
 /* stats_dnsblrecv
  *
@@ -225,7 +228,7 @@ void stats_output(char *target)
    irc_send("PRIVMSG %s :Number of connects: %u (%.2f/minute)",
             target, STATS_CONNECTIONS, STATS_CONNECTIONS ?
             (float)STATS_CONNECTIONS / ((float)uptime / 60.0) : 0.0);
-
+  irc_send("PRIVMSG %s :We are using \002%s\002", target, (cybon) ? "AKILLs" : "KLINEs");
 }
 
 

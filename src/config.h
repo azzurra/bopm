@@ -35,6 +35,7 @@ struct IRCConf
 
    char *connregex;
    char *kline;
+   char *akill;
 
    list_t *channels;   /* List of ChannelConf */
    list_t *performs;   /* List of char * */
@@ -53,6 +54,10 @@ struct OptionsConf
    unsigned int dns_fdlimit;
    char *pidfile;
    char *scanlog;
+
+   char *cybnick; /*CybCop Nick*/
+   char *cybhost; /*CybCop Host*/
+   char *cybident; /*CybCop Ident*/
 };
 
 struct UserConf
@@ -102,6 +107,7 @@ enum BlacklistType {
 struct BlacklistConf
 {
    char   *name;
+   char	  *akill;
    char   *kline;
    enum BlacklistType type;
    int     ban_unknown;
@@ -128,5 +134,5 @@ extern struct OpmConf *OpmItem;
 extern struct ExemptConf *ExemptItem;
 extern list_t *UserItemList;
 extern list_t *ScannerItemList;
-
+extern char cybon;
 #endif /* CONFIG_H */

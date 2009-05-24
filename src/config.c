@@ -55,7 +55,7 @@ struct OpmConf *OpmItem = NULL;
 struct ExemptConf *ExemptItem = NULL;
 list_t *UserItemList = NULL;
 list_t *ScannerItemList = NULL;
-
+char cybon;
 /* End Configuration */
 
 
@@ -112,6 +112,8 @@ void config_init()
    /* Init list of Exempts */
    ExemptItem = MyMalloc(sizeof *ExemptItem);
    ExemptItem->masks = list_create();
+
+   cybon = 0;
 }
 
 /* Setup structs that hold configuration data and then reset default values */
@@ -133,7 +135,7 @@ void config_setup()
    IRCItem->vhost = DupString("");
    IRCItem->connregex = DupString("\\*\\*\\* Notice -- Client connecting: ([^ ]+) \\(([^@]+)@([^\\)]+)\\) \\[([0-9\\.]+)\\].*");
    IRCItem->kline = DupString("KLINE %u@%h :Open Proxy found on your host. Please visit www.blitzed.org/proxy?ip=%i for more information.");
-
+   IRCItem->akill = DupString("PRIVMSG %c :APMPRXAK %i %h 0 %I X");
 
    /* Setup options block defaults */
    OptionsItem->negcache = 0;   /* 0 disabled negcache */

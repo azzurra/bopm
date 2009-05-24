@@ -157,7 +157,10 @@ static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
    else if(!ss->positive)
    {
       /* Only report it if no other scans have found positives yet. */
-      scan_positive(ss, (bl->kline[0] ? bl->kline : IRCItem->kline),
+      if (cybon)
+      	scan_positive(ss, (bl->akill[0] ? bl->akill : IRCItem->akill), text_type);
+      else
+	scan_positive(ss, (bl->kline[0] ? bl->kline : IRCItem->kline),
             text_type);
 
       irc_send_channels("DNSBL -> %s!%s@%s appears in BL zone %s (%s)",

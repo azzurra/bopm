@@ -135,7 +135,10 @@ TYPE                    { return TYPE;         }
 USER                    { return USER;         }
 USERNAME                { return USERNAME;     }
 VHOST                   { return VHOST;        }
-
+CYBNICK			{ return CYBNICK;      }
+CYBHOST			{ return CYBHOST;      }
+CYBIDENT		{ return CYBIDENT;     }
+AKILL			{ return AKILL;        }
 
 HTTP                    {
                           yylval.number = OPM_TYPE_HTTP;

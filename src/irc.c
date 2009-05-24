@@ -71,7 +71,7 @@
 #include "negcache.h"
 #include "malloc.h"
 #include "main.h"
-
+#include "misc.h"
 RCSID("$Id: irc.c,v 1.27 2003/11/29 19:56:19 strtok Exp $");
 
 static void irc_init(void);
@@ -94,6 +94,9 @@ static void m_perform(char **, unsigned int, char *, struct UserInfo *);
 static void m_userhost(char **, unsigned int, char *, struct UserInfo *);
 static void m_cannot_join(char **, unsigned int, char *, struct UserInfo *);
 static void m_kill(char **, unsigned int, char *, struct UserInfo *);
+
+static void m_notify_on(char **, unsigned int, char *, struct UserInfo *);
+static void m_notify_off(char **, unsigned int, char *, struct UserInfo *);
 
 extern struct cnode *nc_head;
 
@@ -128,6 +131,10 @@ static struct CommandHash COMMAND_TABLE[] = {
          {"INVITE",               m_invite         },
          {"001",                  m_perform        },
          {"302",                  m_userhost       },
+ 	 {"600",		  m_notify_on	   }, /*RPL_LOGON*/
+	 {"601",		  m_notify_off	   }, /*RPL_LOGOFF*/
+	 {"605",		  m_notify_off	   }, /*RPL_NOWOFF*/
+	 {"604",		  m_notify_on	   }, /*RPL_NOWON*/
          {"471",                  m_cannot_join    },
          {"473",                  m_cannot_join    },
          {"474",                  m_cannot_join    },
@@ -435,7 +442,6 @@ static void irc_connect(void)
 
    if(strlen(IRCItem->password) > 0)
       irc_send("PASS %s", IRCItem->password);
-
    irc_send("USER %s %s %s :%s",
             IRCItem->username, IRCItem->username, IRCItem->username,
             IRCItem->realname);
@@ -816,8 +822,14 @@ static void m_perform(char **parv, unsigned int parc, char *msg, struct UserInfo
    /* Set modes */
    irc_send("MODE %s %s", IRCItem->nick, IRCItem->mode);
 
+   /*Add CybCop to watch list*/
+   if (strlen(OptionsItem->cybnick) > 0) {
+   	irc_send("WATCH +%s", OptionsItem->cybnick);
+	log_printf("IRC -> Added CybCop nick (%s) to WATCH list", OptionsItem->cybnick);
+   }
+
    /* Set Away */
-   irc_send("AWAY :%s", IRCItem->away);
+   //irc_send("AWAY :%s", IRCItem->away);
 
    /* Perform */
    LIST_FOREACH(node, IRCItem->performs->head)
@@ -968,8 +980,8 @@ static void m_ctcp(char **parv, unsigned int parc, char *msg, struct UserInfo *s
 
    if(strncasecmp(parv[3], "\001VERSION\001", 9) == 0)
    {
-      irc_send("NOTICE %s :\001VERSION Blitzed Open Proxy Monitor %s\001",
-            source_p->irc_nick, VERSION);
+      irc_send("NOTICE %s :\001VERSION Blitzed Open Proxy Monitor %s (Azzurra Patch by Sonic %s [\002%s\002])\001",
+            source_p->irc_nick, VERSION, AZZURRA_VERSION, AZZURRA_CODENAME);
    }
 }
 
@@ -1147,3 +1159,84 @@ static void m_kill(char **parv, unsigned int parc, char *msg, struct UserInfo *s
    /* Restart bopm to rehash */
    main_restart();
 }
+
+/* m_notify_on
+ *
+ * parv[0] source
+ * parv[1] numeric
+ * parv[2] target (our nick)
+ * parv[3] watched user nick
+ * parv[4] watched user ident
+ * parv[5] watched user host
+ * parv[6] TS
+ * parv[7] useless text (:logged online)
+ *
+ */
+
+void m_notify_on(char **parv, unsigned int parc, char *msg, struct UserInfo *source_p)
+{
+	if (strcasecmp(parv[3], OptionsItem->cybnick))
+		return; /*This is not what we need!*/
+
+	if (cybon)
+	{
+		irc_send_channels("\002WARNING:\002 Got Numeric 600 for %s (%s@%s) but CybCop was already ONLINE from my POV", parv[3], parv[4], parv[5]);
+	}
+	else
+	{
+		if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
+		{
+			cybon = 1;
+			log_printf("CybCop is now ONLINE! I'm gonna adding AKILLs instead of KLINEs");
+		}
+		else
+		{
+			irc_send_channels("\002WARNING:\002: CybCop is online but host or ident don't match, for security reason I'm not going to use CybCop, please check your config or Q:Lines!");
+			irc_send_channels("I was expecting: %s!%s@%s but got %s!%s@%s", OptionsItem->cybnick, OptionsItem->cybident, OptionsItem->cybhost, parv[3], parv[4], parv[5]);
+		}
+	}
+}
+/* m_notify_off
+ *
+ * parv[0] source
+ * parv[1] numeric
+ * parv[2] target (our nick)
+ * parv[3] watched user nick
+ * parv[4] watched user ident (could be * if unknow)
+ * parv[5] watched user host (could be * if unknow)
+ * parv[6] TS
+ * parv[7] useless text (:logged offline)
+ *
+ */
+
+void m_notify_off(char **parv, unsigned int parc, char *msg, struct UserInfo *suorce_p)
+{
+	if (strcasecmp(parv[3], OptionsItem->cybnick))
+		return; /*This is not what we need!*/
+	if (!cybon)
+	{
+		irc_send_channels("\002WARNING:\002 Got Numeric 605 for %s (%s@%s) but CybCop was already OFFLINE from my POV", parv[3], parv[4], parv[5]);
+	}
+	else
+	{
+		if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
+		{
+			cybon = 0;
+			log_printf("CybCop is now OFFLINE! I'm gonna adding KLINEs instead of AKILLs");
+		}
+		else if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcmp(parv[4], "*") && ! strcmp(parv[5], "*"))
+		{
+			cybon = 0;
+			log_printf("CybCop is now OFFLINE! I'm gonna adding KLINEs instead of AKILLs");
+		}
+		else
+		{
+			cybon = 0;
+			log_printf("CybCop is now OFFLINE! I'm gonna adding AKILLs instead of KLINEs");
+			irc_send_channels("\002WARNING:\002: CybCop is offline but host or ident in numeric 605 don't match, please check your config or Q:Lines!");
+			irc_send_channels("I was expecting: %s!%s@%s but got %s!%s@%s", OptionsItem->cybnick, OptionsItem->cybident, OptionsItem->cybhost, parv[3], parv[4], parv[5]);
+		}
+	}
+
+}
+

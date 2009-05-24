@@ -17,7 +17,7 @@ extern void stats_connect(void);
 extern void stats_dnsblrecv(struct BlacklistConf *);
 extern void stats_dnsblsend(void);
 extern void stats_output(char *);
-
+extern unsigned int getConnections(void);
 extern void fdstats_output(char *);
 
 #endif /* STATS_H */

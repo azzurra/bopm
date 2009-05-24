@@ -1,5 +1,3 @@
-/* vim: set shiftwidth=3 softtabstop=3 expandtab: */ 
-
 /*
  * Copyright (C) 2002  Erik Fears
  *
@@ -66,6 +64,7 @@
 #include "malloc.h"
 #include "match.h"
 #include "scan.h"
+#include "stats.h" /*For getConnections() used to init a random seed*/
 
 /* Libopm */
 
@@ -74,6 +73,8 @@
 #include "libopm/src/opm_error.h"
 #include "libopm/src/opm_types.h"
 
+/*This has been copied from APM: used for generating AKILL ID for CybCop*/
+#define getrandom(min, max) ((rand() % (unsigned long)(((max)+1) - (min))) + (min))
 
 /* GLOBAL LISTS */
 
@@ -627,8 +628,11 @@ void scan_open_proxy(OPM_T *scanner, OPM_REMOTE_T *remote, int notused,
 
    if(ss->manual_target == NULL)
    {
-      /* kline and close scan */
-      scan_positive(ss, IRCItem->kline, scan_gettype(remote->protocol));
+      /* kline or akill and close scan */
+      if (cybon && strlen(IRCItem->akill) > 0)
+      	scan_positive(ss, IRCItem->akill, scan_gettype(remote->protocol));
+      else
+	scan_positive(ss, IRCItem->kline, scan_gettype(remote->protocol));
 
       /* Report to blacklist */
       dnsbl_report(ss);
@@ -910,21 +914,49 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
 
    unsigned int i;
 
+   unsigned int dip;
+   char *id_text;
+   unsigned long int id;
+   char *dec_ip;
+   char *port;
+
+   port = (char *) malloc(sizeof(char) * 6); //port is a 16bit int, max could be 65535 so 5 chars plus \0
+   port = (char *) memset(port, 0, sizeof(char) * 6);
+
+   id_text = (char *) malloc(sizeof(char) * 12);
+   id_text = (char *) memset(id_text, 0, sizeof(char) * 12);
+   
+   dec_ip = (char *) malloc(sizeof(char) * 12);
+   dec_ip = (char *) memset(dec_ip, 0, sizeof(char) * 12);
+
    struct kline_format_assoc table[] =
       {
          {'i',   (void *) NULL,		FORMATTYPE_STRING },
          {'h',   (void *) NULL,     	FORMATTYPE_STRING },
          {'u',   (void *) NULL,     	FORMATTYPE_STRING },
          {'n',   (void *) NULL,         FORMATTYPE_STRING },
-         {'t',   (void *) NULL,		FORMATTYPE_STRING }
+         {'t',   (void *) NULL,		FORMATTYPE_STRING },
+	 {'c',	 (void *) NULL,		FORMATTYPE_STRING }, /*CybCop Nick*/
+	 {'I',	 (void *) NULL,		FORMATTYPE_STRING }, /*A random AKILL ID*/
+	 {'d',	 (void *) NULL,		FORMATTYPE_STRING }, /*Ip in decimal format!*/
+	 {'p',  (void *) NULL,		FORMATTYPE_STRING } /*Port*/
       };
+	srand(time(NULL) + getConnections());
+	id = (unsigned long int)getrandom(1934374832UL, 3974848322UL);
+	snprintf(id_text, 12, "%lu", id);
 
+	inet_pton(AF_INET, ss->ip, &dip);
+	snprintf(dec_ip, 12, "%d", dip);
+	snprintf(port, 6, "%d", ss->remote->port);
    table[0].data = ss->ip;
    table[1].data = ss->irc_hostname;
    table[2].data = ss->irc_username;
    table[3].data = ss->irc_nick;
    table[4].data = type;
-
+   table[5].data = OptionsItem->cybnick;
+   table[6].data = id_text;
+   table[7].data = dec_ip;
+   table[8].data = port;
    /*
     * Copy format to message character by character, inserting any matching
     * data after %.
@@ -966,6 +998,7 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
                            strcat(message, (char *) table[i].data);
                            len += size;
                         }
+			break;
 
                      default:
                         break;
@@ -985,6 +1018,9 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
       pos++;
    }
    irc_send("%s", message);
+   free(id_text);
+   free(dec_ip);
+   free(port);
 }
 
 

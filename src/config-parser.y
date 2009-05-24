@@ -77,7 +77,10 @@ void *tmp;        /* Variable to temporarily hold nodes before insertion to list
 %token USERNAME
 %token USER
 %token VHOST
-
+%token AKILL
+%token CYBNICK
+%token CYBHOST
+%token CYBIDENT
 %union 
 {
         int number;
@@ -114,6 +117,9 @@ options_item: options_negcache |
               options_pidfile |
               options_dns_fdlimit |
               options_scanlog |
+	      options_cybnick |
+	      options_cybhost |
+	      options_cybident |
               error;
 
 options_negcache: NEGCACHE '=' NUMBER ';'
@@ -125,6 +131,21 @@ options_pidfile: PIDFILE '=' STRING ';'
 {
    MyFree(OptionsItem->pidfile);
    OptionsItem->pidfile = DupString($3);
+};
+options_cybnick: CYBNICK '=' STRING ';'
+{
+	MyFree(OptionsItem->cybnick);
+	OptionsItem->cybnick = DupString($3);
+};
+options_cybhost: CYBHOST '=' STRING ';'
+{
+	MyFree(OptionsItem->cybhost);
+	OptionsItem->cybhost = DupString($3);
+};
+options_cybident: CYBIDENT '=' STRING ';'
+{
+	MyFree(OptionsItem->cybident);
+	OptionsItem->cybident = DupString($3);
 };
 
 options_dns_fdlimit: DNS_FDLIMIT '=' NUMBER ';'
@@ -148,6 +169,7 @@ irc_items: irc_items irc_item |
 irc_item: irc_away      |
           irc_connregex |
           irc_kline     |
+	  irc_akill	|
           irc_nick      |
           irc_nickserv  |
           irc_mode      |
@@ -173,7 +195,11 @@ irc_kline: KLINE '=' STRING ';'
    MyFree(IRCItem->kline);
    IRCItem->kline = DupString($3);
 };
-
+irc_akill: AKILL '=' STRING ';'
+{
+	MyFree(IRCItem->akill);
+	IRCItem->akill = DupString($3);
+}
 irc_mode: MODE '=' STRING ';'
 {
    MyFree(IRCItem->mode);
@@ -528,6 +554,7 @@ opm_blacklist_entry:
 
    item->name = DupString("");
    item->kline = DupString("");
+   item->akill = DupString("");
    item->ban_unknown = 0;
    item->type = A_BITMASK;
    item->reply = list_create();
@@ -545,6 +572,7 @@ blacklist_items: /* Empty */                 |
 
 blacklist_item: blacklist_name        |
                 blacklist_type        |
+		blacklist_akill	      |
                 blacklist_kline       |
                 blacklist_ban_unknown |
                 blacklist_reply       |
@@ -563,6 +591,13 @@ blacklist_kline: KLINE '=' STRING ';' {
    MyFree(item->kline);
    item->kline = DupString($3);
 };
+
+blacklist_akill: AKILL '=' STRING ';' {
+	struct BlacklistConf *item = tmp;
+
+	MyFree(item->akill);
+	item->akill = DupString($3);
+}
 
 blacklist_type: TYPE '=' STRING ';' {
    struct BlacklistConf *item = tmp;

@@ -84,7 +84,6 @@ int main(int argc, char **argv)
    struct rlimit rlim;
 
    nc_counter = 0;
-
    while (1)
    {
       c = getopt(argc, argv, "dc:");
