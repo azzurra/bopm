@@ -54,19 +54,26 @@ static void command_free(struct Command *);
 static void cmd_check(char *, char *, struct ChannelConf *);
 static void cmd_stat(char *, char *, struct ChannelConf *);
 static void cmd_fdstat(char *, char *, struct ChannelConf *);
+static void cmd_quit(char *, char *, struct ChannelConf *);
+static void cmd_restart(char *, char *, struct ChannelConf *);
+static void cmd_exception(char *, char *, struct ChannelConf *);
+
 #if 0
 static void cmd_op(char *, char *, struct ChannelConf *);
 #endif
 
 static struct OperCommandHash COMMAND_TABLE[] =
    {
-      {"CHECK",  cmd_check  },
-      {"SCAN",   cmd_check  },
-      {"STAT",   cmd_stat   },
-      {"STATS",  cmd_stat   },
-      {"STATUS", cmd_stat   },
-      {"FDSTAT", cmd_fdstat },
-/*    {"OP",     cmd_op     } */
+      {"CHECK",  	cmd_check     	},
+      {"SCAN",   	cmd_check     	},
+      {"STAT",   	cmd_stat      	},
+      {"STATS",  	cmd_stat      	},
+      {"STATUS", 	cmd_stat      	},
+      {"FDSTAT", 	cmd_fdstat    	},
+      {"QUIT",   	cmd_quit      	},
+      {"RESTART",	cmd_restart   	},
+      {"EXCEPTION",	cmd_exception	}
+/*    {"OP",    	cmd_op     	} */
    };
 
 
@@ -329,8 +336,104 @@ void command_userhost(char *reply)
       }
    }
 }
+/*
+ * cmd_exception
+ *
+ * Lists, adds, or removes and exception from the list
+ *
+ * Paramters: 
+ *    param: Parameters of the command
+ *    source: irc_nick of user who requested the command
+ *    target: channel command was sent to
+ *
+ */
+
+static void cmd_exception(char *param, char *source, struct ChannelConf *target)
+{
+	char 	**params;
+	int	i = 0;
+	node_t	*node;
+	if (param == NULL)
+		return; //we don't have enough params
+	params = (char **) malloc(sizeof(char *) * 2); //we need max 2 params 
+	params = (char **) memset(params, 0, sizeof(char *) * 2);
+	params[0] = strtok(param, " ");
+	if (params[0] == NULL)
+		return;
+	params[1] = strtok(NULL, " "); //WARNING: this could be NULL
+	if (!strcasecmp(params[0], "LIST"))
+	{
+		irc_send("PRIVMSG %s :\002***\002Exception List: \002***\002", target->name);
+		LIST_FOREACH(node, ExemptItem->masks->head)
+		{
+			irc_send("PRIVMSG %s :%d) %s", target->name, ++i, node->data);
+		}
+		irc_send("PRIVMSG %s :\002***\002End Of List \002***\002", target->name);
+	}
+	else if (!strcasecmp(params[0], "ADD"))
+	{
+		//FIXME: Adding in memory is simple...but we need to save this in the conf... :(
+		if (params[1] == NULL)
+			return;
+		node = node_create(strdup(params[1]));
+		list_add(ExemptItem->masks, node);
+		irc_send("PRIVMSG %s :Ok %s, done.", target->name, source);
+		
+	} else if (!strcasecmp(params[0], "DEL")) {
+		//FIXME: ...The same story...
+		if (params[1] == NULL)
+			return;
+		LIST_FOREACH(node, ExemptItem->masks->head)
+		{
+			if (!strcasecmp(params[1], node->data))
+			{
+				//found!
+				list_remove(ExemptItem->masks, node);
+				irc_send("PRIVMSG %s :Ok %s, done",target->name, source);
+				return;
+			}
+		}
+		irc_send("PRIVMSG %s :Sorry %s, entry not found.", target->name, source);
+	}
+	free(params);
+}
+/*
+ * cmd_restart
+ *
+ * Restarts the Proxy Monitor (this could be done via /kill but that
+ * was very ugly :S
+ *
+ * Paramters: 
+ *    param: Parameters of the command
+ *    source: irc_nick of user who requested the command
+ *    target: channel command was sent to
+ *
+ */
+static void cmd_restart(char *param, char *source, struct ChannelConf *target)
+{
+	log_printf("Got RESTART command from %s", source);
+	irc_send("QUIT :Restarting...");
+	main_restart();
+}
+
+/* cmd_quit
+ *
+ * Shuts down the Proxy Monitor
+ *
+ * Paramters: 
+ *    param: Parameters of the command
+ *    source: irc_nick of user who requested the command
+ *    target: channel command was sent to
+ *
+ */
 
 
+static void cmd_quit(char *param, char *source, struct ChannelConf *target)
+{
+	log_printf("Shutdown requested by %s", source);
+	irc_send("QUIT :Shutted Down!");
+	exit(0); /*R.I.P.*/
+}
 
 /* cmd_check
  *
