@@ -68,7 +68,7 @@ char *CONFNAME = DEFAULTNAME;
 char *CONFDIR = BOPM_ETCDIR;
 char *LOGDIR = BOPM_LOGDIR;
 char *CONFFILE, *LOGFILE;
-
+char *EXEMPTFILE;
 struct sigaction ALARMACTION;
 struct sigaction INTACTION;
 struct sigaction USR1ACTION;
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
    char spid[16];
    pid_t pid;
    int c;
-   size_t lenc, lenl, lenp;
+   size_t lenc, lenl, lenp,lene;
    unsigned int nc_counter, i;
    FILE *pidout;
    struct rlimit rlim;
@@ -109,13 +109,15 @@ int main(int argc, char **argv)
    lenc = strlen(CONFDIR) + strlen(CONFNAME) + strlen(CONFEXT) + 3;
    lenl = strlen(LOGDIR) + strlen(CONFNAME) + strlen(LOGEXT) + 3;
    lenp = strlen(LOGDIR) + strlen(CONFNAME) + strlen(PIDEXT) + 3;
+   lene = strlen(CONFDIR) + strlen("exempt") + strlen(CONFEXT) +3;
 
    CONFFILE = MyMalloc(lenc * sizeof *CONFFILE);
    LOGFILE = MyMalloc(lenl * sizeof *LOGFILE);
+   EXEMPTFILE = MyMalloc(lene * sizeof *EXEMPTFILE);
 
    snprintf(CONFFILE, lenc, "%s/%s.%s", CONFDIR, CONFNAME, CONFEXT);
    snprintf(LOGFILE, lenl, "%s/%s.%s", LOGDIR, CONFNAME, LOGEXT);
-
+   snprintf(EXEMPTFILE, lene, "%s/%s.%s", CONFDIR, "exempt", CONFEXT);
    /* Fork off. */
 
    if (OPT_DEBUG <= 0)
@@ -153,9 +155,12 @@ int main(int argc, char **argv)
 
 
    log_printf("MAIN -> BOPM %s started.", VERSION);
-   log_printf("MAIN -> Reading configuration file...");
 
-   config_load(CONFFILE);
+   log_printf("MAIN -> Reading configuration file...");
+   config_load(CONFFILE,0);
+ 
+   log_printf("MAIN -> Reading Exempt Configuration file...");
+   config_load(EXEMPTFILE,1);
 
    if (OptionsItem->scanlog)
       scanlog_open(OptionsItem->scanlog);
@@ -288,7 +293,10 @@ static void do_signal(int signum)
    }
 }
 
-
+void ext_save(void)
+{
+	save_exempt(EXEMPTFILE);
+}
 void main_restart(void)
 {
    RESTART = 1;

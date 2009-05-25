@@ -11,8 +11,8 @@ extern char linebuf[512];
 extern int  linenum;
 
 extern void yyerror(const char *);
-extern void config_load(const char *);
-
+extern void config_load(const char *, unsigned char);
+extern void save_exempt();
 
 /* structs to hold data */
 

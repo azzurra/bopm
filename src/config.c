@@ -58,31 +58,50 @@ list_t *ScannerItemList = NULL;
 char cybon;
 /* End Configuration */
 
+void save_exempt(char *filename)
+{
+	FILE	*fd;
+	node_t	*node;
 
+	log_printf("CONFIG -> Saving Exempt config File...");
+	if (!(fd = fopen(filename, "w"))) {
+		log_printf("CONFIG -> Error opening file: %s", filename);
+		exit(1);
+	}
+	LIST_FOREACH(node, ExemptItem->masks->head)
+	{
+		fputs("exempt { mask = \"", fd);
+		fputs(node->data, fd);
+		fputs("\"; };\r\n", fd);
+	}
+	fclose(fd);
+}
 
 /* Rehash or load new configuration from filename, via flex/bison parser */
-void config_load(const char *filename)
+void config_load(const char *filename, unsigned char isExempt)
 {
+	if (!isExempt)
+	{
+   		config_init();
+   		config_setup(); /* Setup/clear current configuration */
+	}
+   	log_printf("CONFIG -> Loading %s", filename);
 
-   config_init();
-   config_setup(); /* Setup/clear current configuration */
+   	if((yyin = fopen(filename, "r")) == NULL)
+   	{
+      		log_printf("CONFIG -> Error opening %s", filename);
+      		exit(1);
+   	}
 
-   log_printf("CONFIG -> Loading %s", filename);
-
-   if((yyin = fopen(filename, "r")) == NULL)
-   {
-      log_printf("CONFIG -> Error opening %s", filename);
-      exit(1);
-   }
-
-   yyparse();
-
-   scan_init();       /* Initialize the scanners once we have the configuration */
-   command_init();    /* Initialize the command queue */
-   stats_init();      /* Initialize stats (UPTIME) */
-   firedns_init();    /* Initialize adns */
-
-   fclose(yyin);
+   	yyparse();
+	if (!isExempt)
+	{
+   		scan_init();       /* Initialize the scanners once we have the configuration */
+   		command_init();    /* Initialize the command queue */
+   		stats_init();      /* Initialize stats (UPTIME) */
+   		firedns_init();    /* Initialize adns */
+	}
+   	fclose(yyin);
 }
 
 /* Malloc and initialize configuration data to NULL */

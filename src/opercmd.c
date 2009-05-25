@@ -57,6 +57,7 @@ static void cmd_fdstat(char *, char *, struct ChannelConf *);
 static void cmd_quit(char *, char *, struct ChannelConf *);
 static void cmd_restart(char *, char *, struct ChannelConf *);
 static void cmd_exception(char *, char *, struct ChannelConf *);
+static void cmd_protocols(char *, char *, struct ChannelConf *);
 
 #if 0
 static void cmd_op(char *, char *, struct ChannelConf *);
@@ -72,7 +73,8 @@ static struct OperCommandHash COMMAND_TABLE[] =
       {"FDSTAT", 	cmd_fdstat    	},
       {"QUIT",   	cmd_quit      	},
       {"RESTART",	cmd_restart   	},
-      {"EXCEPTION",	cmd_exception	}
+      {"EXCEPTION",	cmd_exception	},
+      {"PROTOCOLS",	cmd_protocols   }
 /*    {"OP",    	cmd_op     	} */
    };
 
@@ -337,6 +339,55 @@ void command_userhost(char *reply)
    }
 }
 /*
+ * cmd_protocols
+ *
+ * Lists, adds, or removes and protocols from the list
+ *
+ * Paramters: 
+ *    param: Parameters of the command
+ *    source: irc_nick of user who requested the command
+ *    target: channel command was sent to
+ *
+ */
+
+static void cmd_protocols(char *param, char *source, struct ChannelConf *target)
+{
+	char 			**params;
+	int			i = 0, j = 0;
+	node_t			*node;
+	node_t			*node2;
+	struct ScannerConf	*sc;
+	struct ProtocolConf	*proto;
+
+	if (param == NULL)
+		return; //we don't have enough params
+	
+	params = (char **) malloc(sizeof(char *) * 2); //we need max 2 params 
+	params = (char **) memset(params, 0, sizeof(char *) * 2);
+	params[0] = strtok(param, " ");
+	if (params[0] == NULL)
+		return;
+	params[1] = strtok(NULL, " "); //WARNING: this could be NULL
+	if (!strcasecmp(params[0], "LIST"))
+	{
+		irc_send("PRIVMSG %s :\002***\002Protocols List: \002***\002", target->name);
+		LIST_FOREACH(node, ScannerItemList->head)
+		{
+			sc = (struct ScannerConf *) node->data;
+			irc_send("PRIVMSG %s :%d) %s", target->name, ++i, sc->name);
+			LIST_FOREACH(node2, sc->protocols->head)
+			{
+				proto = (struct ProtocolConf *) node2->data;
+				irc_send("PRIVMSG %s : %d) %s:%d", target->name, ++j, scan_gettype(proto->type), proto->port);
+			}
+			j = 0;
+		}
+		irc_send("PRIVMSG %s :\002***\002End Of List \002***\002", target->name);
+	}
+	free(params);
+}
+
+/*
  * cmd_exception
  *
  * Lists, adds, or removes and exception from the list
@@ -372,15 +423,13 @@ static void cmd_exception(char *param, char *source, struct ChannelConf *target)
 	}
 	else if (!strcasecmp(params[0], "ADD"))
 	{
-		//FIXME: Adding in memory is simple...but we need to save this in the conf... :(
 		if (params[1] == NULL)
 			return;
 		node = node_create(strdup(params[1]));
 		list_add(ExemptItem->masks, node);
 		irc_send("PRIVMSG %s :Ok %s, done.", target->name, source);
-		
+		ext_save();	
 	} else if (!strcasecmp(params[0], "DEL")) {
-		//FIXME: ...The same story...
 		if (params[1] == NULL)
 			return;
 		LIST_FOREACH(node, ExemptItem->masks->head)
@@ -390,10 +439,12 @@ static void cmd_exception(char *param, char *source, struct ChannelConf *target)
 				//found!
 				list_remove(ExemptItem->masks, node);
 				irc_send("PRIVMSG %s :Ok %s, done",target->name, source);
+				ext_save();
 				return;
 			}
 		}
 		irc_send("PRIVMSG %s :Sorry %s, entry not found.", target->name, source);
+		
 	}
 	free(params);
 }
