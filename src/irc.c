@@ -823,7 +823,7 @@ static void m_perform(char **parv, unsigned int parc, char *msg, struct UserInfo
    irc_send("MODE %s %s", IRCItem->nick, IRCItem->mode);
 
    /*Add CybCop to watch list*/
-   if (strlen(OptionsItem->cybnick) > 0) {
+   if (OptionsItem->cybnick != NULL && strlen(OptionsItem->cybnick) > 0) {
    	irc_send("WATCH +%s", OptionsItem->cybnick);
 	log_printf("IRC -> Added CybCop nick (%s) to WATCH list", OptionsItem->cybnick);
    }

@@ -946,7 +946,7 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
 	snprintf(id_text, 12, "%lu", id);
 
 	inet_pton(AF_INET, ss->ip, &dip);
-	snprintf(dec_ip, 12, "%d", dip);
+	snprintf(dec_ip, 12, "%u", dip);
 	snprintf(port, 6, "%d", ss->remote->port);
    table[0].data = ss->ip;
    table[1].data = ss->irc_hostname;

@@ -194,8 +194,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src
-data_DATA = bopm.conf.sample bopm.conf.blitzed
-EXTRA_DIST = ChangeLog contrib INSTALL README bopm.conf.sample bopm.conf.blitzed network-bopm
+data_DATA = bopm.conf.sample bopm.conf.blitzed exempt.conf
+EXTRA_DIST = ChangeLog contrib INSTALL README bopm.conf.sample bopm.conf.blitzed network-bopm exempt.conf
 all: all-recursive
 
 .SUFFIXES:
@@ -257,7 +257,7 @@ uninstall-dataDATA:
 	@list='$(data_DATA)'; for p in $$list; do \
 	  f=$(am__strip_dir) \
 	  echo " rm -f '$(DESTDIR)$(datadir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(datadir)/$$f"; \
+ 	  rm -f "$(DESTDIR)$(datadir)/$$f"; \
 	done
 
 # This directory's subdirectories are mostly independent; you can cd
