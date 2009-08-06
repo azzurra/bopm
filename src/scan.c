@@ -924,7 +924,9 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
    unsigned long int id;
    char *dec_ip;
    char *port;
-
+   char *null;
+   null = (char *) malloc(sizeof(char) * 7);
+   strcpy(null, "(null)");
    port = (char *) malloc(sizeof(char) * 6); //port is a 16bit int, max could be 65535 so 5 chars plus \0
    port = (char *) memset(port, 0, sizeof(char) * 6);
 
@@ -954,9 +956,9 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
 	snprintf(dec_ip, 12, "%u", dip);
 	snprintf(port, 6, "%d", ss->remote->port);
    table[0].data = ss->ip;
-   table[1].data = ss->irc_hostname;
-   table[2].data = ss->irc_username;
-   table[3].data = ss->irc_nick;
+   table[1].data = (ss->irc_hostname == NULL) ? ss->ip : ss->irc_hostname;
+   table[2].data = (ss->irc_username == NULL) ? null : ss->irc_username;
+   table[3].data = (ss->irc_nick == NULL) ? null : ss->irc_nick;
    table[4].data = type;
    table[5].data = OptionsItem->cybnick;
    table[6].data = id_text;
@@ -1026,6 +1028,7 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
    free(id_text);
    free(dec_ip);
    free(port);
+   free(null);
 }
 
 
