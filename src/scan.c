@@ -625,7 +625,6 @@ void scan_open_proxy(OPM_T *scanner, OPM_REMOTE_T *remote, int notused,
 
    scs = (struct scanner_struct *) data;
    ss = (struct scan_struct *) remote->data;
-
    if(ss->manual_target == NULL)
    {
       /* kline or akill and close scan */
@@ -647,6 +646,12 @@ void scan_open_proxy(OPM_T *scanner, OPM_REMOTE_T *remote, int notused,
    }
    else
    {
+   //Akill or kline also on manual scans!
+      if (cybon && strlen(IRCItem->akill) > 0)
+      	scan_positive(ss, IRCItem->akill, scan_gettype(remote->protocol));
+      else
+	scan_positive(ss, IRCItem->kline, scan_gettype(remote->protocol));
+
       irc_send("PRIVMSG %s :CHECK -> OPEN PROXY %s:%d (%s) [%s]",
             ss->manual_target->name, remote->ip, remote->port,
             scan_gettype(remote->protocol), scs->name);
