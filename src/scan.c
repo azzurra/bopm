@@ -952,9 +952,9 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
 	id = (unsigned long int)getrandom(1934374832UL, 3974848322UL);
 	snprintf(id_text, 12, "%lu", id);
 
-	inet_pton(AF_INET, ss->ip, &dip);
-	snprintf(dec_ip, 12, "%u", dip);
-	snprintf(port, 6, "%d", ss->remote->port);
+   inet_pton(AF_INET, ss->ip, &dip);
+   snprintf(dec_ip, 12, "%u", dip);
+   snprintf(port, 6, "%d", ss->remote->port);
    table[0].data = ss->ip;
    table[1].data = (ss->irc_hostname == NULL) ? ss->ip : ss->irc_hostname;
    table[2].data = (ss->irc_username == NULL) ? null : ss->irc_username;
