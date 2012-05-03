@@ -1,0 +1,16 @@
+Makefile
+Doxyfile
+config.log
+config.status
+libtool
+*.o
+*.lo
+*.la
+stamp-h1
+.deps
+.libs
+/src/bopm
+/src/setup.h
+/src/libopm/src/setup.h
+/src/libopm/src/test
+/src/libopm/src/test_debug
