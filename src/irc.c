@@ -1178,11 +1178,7 @@ void m_notify_on(char **parv, unsigned int parc, char *msg, struct UserInfo *sou
 	if (strcasecmp(parv[3], OptionsItem->cybnick))
 		return; /*This is not what we need!*/
 
-	if (cybon)
-	{
-		irc_send_channels("\002WARNING:\002 Got Numeric 600 for %s (%s@%s) but CybCop was already ONLINE from my POV", parv[3], parv[4], parv[5]);
-	}
-	else
+	if (!cybon)
 	{
 		if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
 		{
@@ -1213,11 +1209,8 @@ void m_notify_off(char **parv, unsigned int parc, char *msg, struct UserInfo *su
 {
 	if (strcasecmp(parv[3], OptionsItem->cybnick))
 		return; /*This is not what we need!*/
-	if (!cybon)
-	{
-		irc_send_channels("\002WARNING:\002 Got Numeric 605 for %s (%s@%s) but CybCop was already OFFLINE from my POV", parv[3], parv[4], parv[5]);
-	}
-	else
+
+	if (cybon)
 	{
 		if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
 		{
