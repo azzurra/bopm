@@ -1,8 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libopm, [0.1])
+
+AC_PREREQ([2.67])
+AC_INIT(libopm, [0.1], [devel@ml.azzurra.org])
+AC_CANONICAL_TARGET
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/libopm.h)
 AM_CONFIG_HEADER(src/setup.h)
-AM_INIT_AUTOMAKE()
+
+AM_INIT_AUTOMAKE([1.11 silent-rules])
 AC_PREFIX_DEFAULT([/usr/local/libopm])
 AM_MAINTAINER_MODE
 
@@ -14,15 +19,6 @@ DOX_DIR_MAN=man
 AC_SUBST(DOX_DIR_HTML)
 AC_SUBST(DOX_DIR_LATEX)
 AC_SUBST(DOX_DIR_MAN)
-
-AC_ARG_WITH(extra-fascism,
-    AC_HELP_STRING([--with-extra-fascism],
-    [add extra gcc3-specific warning flags]),
-    [CFLAGS="$CFLAGS -g -O0 -W -Wall -Wfloat-equal -Wbad-function-cast -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs"])
-
-dnl AC_ARG_WITH(faldo,
-dnl     AC_HELP_STRING([--with-faldo],
-dnl     [make some use of Nick Faldo]))
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -44,7 +40,7 @@ AC_C_CONST
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 
-AC_FUNC_SNPRINTF
+AC_CHECK_FUNCS(snprintf vsnprintf)
 
 dnl if they want select() or they don't have poll() then we need to check
 dnl that we actually have select()
@@ -67,16 +63,6 @@ dnl Solaris has to be weird doesn't it...
 AC_CHECK_LIB(socket, socket, AC_SUBST(LSOCKET, [-lsocket]))
 AC_CHECK_LIB(nsl, gethostbyname, AC_SUBST(LNSL, [-lnsl]))
 
-dnl teehee - taken from MRTG / Tobias Oetiker
-dnl if test "$with_faldo" != "no"; then
-dnl  echo $ECHO_N "checking for Nick Faldo $ECHO_C"
-dnl  for bleh in 1 2 3; do
-dnl   echo $ECHO_N "."        
-dnl   sleep 1
-dnl  done
-dnl  AC_MSG_RESULT([ http://blitzed.org/advocacy/enjoy.jpg])
-dnl fi
-
 LTLIBOBJS=`echo "$LIB@&t@OBJS" |
            sed 's,\.[[^.]]* ,.lo ,g;s,\.[[^.]]*$,.lo,'`
 AC_SUBST(LTLIBOBJS)
@@ -89,13 +75,3 @@ AC_ARG_WITH(werror,
     [CFLAGS="$CFLAGS -Werror"])
 
 AC_OUTPUT(Makefile src/Makefile doc/Makefile doc/Doxyfile)
-
-echo "##############################################################################"
-echo "Everything is now configured.  To compile libopm now, just type make.  It"
-echo "requires GNU Make, which may be installed as gmake on your system."
-echo 
-echo "libopm will be installed in ${prefix}.  To change this, run:"
-echo "   ./configure --prefix=DIRECTORY"
-echo 
-echo "##############################################################################"
-echo

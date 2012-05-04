@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in setup.h.in
+
 lib_LTLIBRARIES = libopm.la
 
 libopm_la_SOURCES = compat.c compat.h config.c config.h inet.c inet.h \
