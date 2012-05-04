@@ -1,4 +1,9 @@
 Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+lt*.m4
+libtool.m4
 Doxyfile
 config.log
 config.status
@@ -14,3 +19,14 @@ stamp-h1
 /src/libopm/src/setup.h
 /src/libopm/src/test
 /src/libopm/src/test_debug
+config.guess
+config.sub
+configure
+depcomp
+install-sh
+ltmain.sh
+missing
+*.swp
+*~
+ylwrap
+setup.h.in
