@@ -1,25 +1,25 @@
-/* vim: set shiftwidth=3 softtabstop=3 expandtab: */ 
+/* vim: set shiftwidth=3 softtabstop=3 expandtab: */
 
 /*
 Copyright (C) 2002-2003  Erik Fears
- 
+
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
- 
+
       Foundation, Inc.
       59 Temple Place - Suite 330
       Boston, MA  02111-1307, USA.
- 
+
 */
 
 #include "setup.h"
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 
    log_printf("MAIN -> Reading configuration file...");
    config_load(CONFFILE,0);
- 
+
    log_printf("MAIN -> Reading Exempt Configuration file...");
    config_load(EXEMPTFILE,1);
 
@@ -200,7 +200,7 @@ int main(int argc, char **argv)
 
    while (1)
    {
-      
+
 
       /* Main cycles */
       irc_cycle();
@@ -212,15 +212,15 @@ int main(int argc, char **argv)
       {
          /* If restarted in debug mode, die */
          if(OPT_DEBUG)
-            return(1); 
+            return(1);
 
          log_printf("MAIN -> Restarting process");
 
          /* Get upper file descriptor limit */
-         if(getrlimit(RLIMIT_NOFILE, &rlim) == -1) 
+         if(getrlimit(RLIMIT_NOFILE, &rlim) == -1)
          {
             log_printf("MAIN RESTART -> getrlimit() error retrieving RLIMIT_NOFILE (%s)", strerror(errno));
-            return(1); 
+            return(1);
          }
 
          /* Set file descriptors 0-rlim_cur close on exec */
@@ -295,7 +295,7 @@ static void do_signal(int signum)
 
 void ext_save(void)
 {
-	save_exempt(EXEMPTFILE);
+   save_exempt(EXEMPTFILE);
 }
 void main_restart(void)
 {

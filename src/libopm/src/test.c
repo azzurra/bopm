@@ -64,7 +64,7 @@ int main(int argc, char **argv)
    unsigned short router_ports[] = {
       23
    };
-   
+
    unsigned short socks4_ports[] = {
       1080
    };
@@ -76,12 +76,12 @@ int main(int argc, char **argv)
    unsigned short httppost_ports[] = {
       80, 8090, 3128
    };
-   
+
    OPM_T *scanner;
    OPM_REMOTE_T *remote;
 
    scanner = opm_create();
-  
+
    if(argc >= 2)
       remote  = opm_remote_create(argv[1]);
    else
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
    opm_callback(scanner, OPM_CALLBACK_ERROR, &handle_error, NULL);
 
 
-   /* Setup the scanner configuration */ 
+   /* Setup the scanner configuration */
    opm_config(scanner, OPM_CONFIG_FD_LIMIT, &fdlimit);
    opm_config(scanner, OPM_CONFIG_SCAN_IP, "216.175.104.202");
    opm_config(scanner, OPM_CONFIG_SCAN_PORT, &scan_port);
@@ -108,27 +108,27 @@ int main(int argc, char **argv)
    for (s = ARRAY_SIZEOF(http_ports), i = 0; i < s; i++) {
       opm_addtype(scanner, OPM_TYPE_HTTP, http_ports[i]);
    }
-   
+
    for (s = ARRAY_SIZEOF(wingate_ports), i = 0; i < s; i++) {
       opm_addtype(scanner, OPM_TYPE_WINGATE, wingate_ports[i]);
    }
-   
+
    for (s = ARRAY_SIZEOF(router_ports), i = 0; i < s; i++) {
       opm_addtype(scanner, OPM_TYPE_ROUTER, router_ports[i]);
    }
-   
+
    for (s = ARRAY_SIZEOF(socks4_ports), i = 0; i < s; i++) {
       opm_addtype(scanner, OPM_TYPE_SOCKS4, socks4_ports[i]);
    }
-   
+
    for (s = ARRAY_SIZEOF(socks5_ports), i = 0; i < s; i++) {
       opm_addtype(scanner, OPM_TYPE_SOCKS5, socks5_ports[i]);
    }
-   
+
    for (s = ARRAY_SIZEOF(httppost_ports), i = 0; i < s; i++) {
       opm_addtype(scanner, OPM_TYPE_HTTPPOST, httppost_ports[i]);
    }
-   
+
    /* Remote structs can also have their own extended protocol configurations. For instance
       if the target hostname contains strings such as 'proxy' or 'www', extended ports could
       be scanned. */
@@ -148,14 +148,14 @@ int main(int argc, char **argv)
                        printf("Unknown Error %d\n", err);
                        return 0;
    }
-   
+
 
    while(!complete)
       opm_cycle(scanner);
 
    opm_free(scanner);
 
-   return 0; 
+   return 0;
 }
 
 void open_proxy(OPM_T *scanner, OPM_REMOTE_T *remote, int notused,

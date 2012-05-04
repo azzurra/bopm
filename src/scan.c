@@ -128,7 +128,7 @@ void scan_cycle()
 
 
 /* scan_timer
- *   
+ *
  *    Perform actions that are to be performed every ~1 second.
  *
  * Parameters: NONE
@@ -199,7 +199,7 @@ char *scan_gettype(int protocol)
 
    Parameters:
       None
-   
+
    Return:
       None
 */
@@ -453,7 +453,7 @@ void scan_connect(char **user, char *msg)
 
 /* scan_create
  *
- *    Allocate scan struct, including user information and REMOTE 
+ *    Allocate scan struct, including user information and REMOTE
  *    for LIBOPM.
  *
  * Parameters:
@@ -500,7 +500,7 @@ struct scan_struct *scan_create(char **user, char *msg)
  *
  * Parameters:
  *    ss: scan_struct to free
- * 
+ *
  * Return: NONE
  *
  */
@@ -565,7 +565,7 @@ void scan_checkfinished(struct scan_struct *ss)
  *    tests.
  *
  * Parameters:
- *    ss: scan_struct containing information regarding positive host 
+ *    ss: scan_struct containing information regarding positive host
  *    kline: command to send to IRC server to ban the user (see scan_irckline)
  *    type: string of the type of proxy found to be running on the host
  *
@@ -608,7 +608,7 @@ void scan_positive(struct scan_struct *ss, char *kline, char *type)
  *    remote: Remote struct containing information regarding remote end
  *
  * Return: NONE
- * 
+ *
  */
 
 void scan_open_proxy(OPM_T *scanner, OPM_REMOTE_T *remote, int notused,
@@ -629,9 +629,9 @@ void scan_open_proxy(OPM_T *scanner, OPM_REMOTE_T *remote, int notused,
    {
       /* kline or akill and close scan */
       if (cybon && strlen(IRCItem->akill) > 0)
-      	scan_positive(ss, IRCItem->akill, scan_gettype(remote->protocol));
+         scan_positive(ss, IRCItem->akill, scan_gettype(remote->protocol));
       else
-	scan_positive(ss, IRCItem->kline, scan_gettype(remote->protocol));
+         scan_positive(ss, IRCItem->kline, scan_gettype(remote->protocol));
 
       /* Report to blacklist */
       dnsbl_report(ss);
@@ -646,11 +646,11 @@ void scan_open_proxy(OPM_T *scanner, OPM_REMOTE_T *remote, int notused,
    }
    else
    {
-   //Akill or kline also on manual scans!
+      //Akill or kline also on manual scans!
       if (cybon && strlen(IRCItem->akill) > 0)
-      	scan_positive(ss, IRCItem->akill, scan_gettype(remote->protocol));
+         scan_positive(ss, IRCItem->akill, scan_gettype(remote->protocol));
       else
-	scan_positive(ss, IRCItem->kline, scan_gettype(remote->protocol));
+         scan_positive(ss, IRCItem->kline, scan_gettype(remote->protocol));
 
       irc_send("PRIVMSG %s :CHECK -> OPEN PROXY %s:%d (%s) [%s]",
             ss->manual_target->name, remote->ip, remote->port,
@@ -831,7 +831,7 @@ static void scan_handle_error(OPM_T *scanner, OPM_REMOTE_T *remote,
                   remote->ip, remote->port, scan_gettype(remote->protocol),
                   scs->name, remote->bytes_read);
          }
-  
+
          if(ss->manual_target != NULL)
          {
             irc_send("PRIVMSG %s :CHECK -> Negotiation failed %s:%d (%s) "
@@ -848,7 +848,7 @@ static void scan_handle_error(OPM_T *scanner, OPM_REMOTE_T *remote,
          log_printf("SCAN -> File descriptor allocation error %s:%d (%s) "
                "[%s]", remote->ip, remote->port,
                scan_gettype(remote->protocol), scs->name);
-         
+
          if(ss->manual_target != NULL)
          {
             irc_send("PRIVMSG %s :CHECK -> Scan failed %s:%d (%s) [%s] "
@@ -895,7 +895,7 @@ static void scan_negative(struct scan_struct *ss)
 
 /* scan_irckline
  *
- *    ss has been found as a positive host and is to be klined. 
+ *    ss has been found as a positive host and is to be klined.
  *    Format a kline message using the kline message provided
  *    as a format, then pass it to irc_send() to be sent to the remote server.
  *
@@ -903,7 +903,7 @@ static void scan_negative(struct scan_struct *ss)
  *    ss: scan_struct containing information regarding host to be klined
  *    format: kline message to format
  *    type: type of proxy found (%t format character)
- * 
+ *
  * Return: NONE
  *
  */
@@ -932,25 +932,26 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
 
    id_text = (char *) malloc(sizeof(char) * 12);
    id_text = (char *) memset(id_text, 0, sizeof(char) * 12);
-   
+
    dec_ip = (char *) malloc(sizeof(char) * 12);
    dec_ip = (char *) memset(dec_ip, 0, sizeof(char) * 12);
 
    struct kline_format_assoc table[] =
       {
-         {'i',   (void *) NULL,		FORMATTYPE_STRING },
-         {'h',   (void *) NULL,     	FORMATTYPE_STRING },
-         {'u',   (void *) NULL,     	FORMATTYPE_STRING },
-         {'n',   (void *) NULL,         FORMATTYPE_STRING },
-         {'t',   (void *) NULL,		FORMATTYPE_STRING },
-	 {'c',	 (void *) NULL,		FORMATTYPE_STRING }, /*CybCop Nick*/
-	 {'I',	 (void *) NULL,		FORMATTYPE_STRING }, /*A random AKILL ID*/
-	 {'d',	 (void *) NULL,		FORMATTYPE_STRING }, /*Ip in decimal format!*/
-	 {'p',  (void *) NULL,		FORMATTYPE_STRING } /*Port*/
+         {'i', (void *) NULL, FORMATTYPE_STRING },
+         {'h', (void *) NULL, FORMATTYPE_STRING },
+         {'u', (void *) NULL, FORMATTYPE_STRING },
+         {'n', (void *) NULL, FORMATTYPE_STRING },
+         {'t', (void *) NULL, FORMATTYPE_STRING },
+         {'c', (void *) NULL, FORMATTYPE_STRING }, /*CybCop Nick*/
+         {'I', (void *) NULL, FORMATTYPE_STRING }, /*A random AKILL ID*/
+         {'d', (void *) NULL, FORMATTYPE_STRING }, /*Ip in decimal format!*/
+         {'p', (void *) NULL, FORMATTYPE_STRING }  /*Port*/
       };
-	srand(time(NULL) + getConnections());
-	id = (unsigned long int)getrandom(1934374832UL, 3974848322UL);
-	snprintf(id_text, 12, "%lu", id);
+
+   srand(time(NULL) + getConnections());
+   id = (unsigned long int)getrandom(1934374832UL, 3974848322UL);
+   snprintf(id_text, 12, "%lu", id);
 
    inet_pton(AF_INET, ss->ip, &dip);
    snprintf(dec_ip, 12, "%u", dip);
@@ -964,6 +965,7 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
    table[6].data = id_text;
    table[7].data = dec_ip;
    table[8].data = port;
+
    /*
     * Copy format to message character by character, inserting any matching
     * data after %.
@@ -1005,7 +1007,7 @@ static void scan_irckline(struct scan_struct *ss, char *format, char *type)
                            strcat(message, (char *) table[i].data);
                            len += size;
                         }
-			break;
+                        break;
 
                      default:
                         break;
@@ -1098,7 +1100,7 @@ void scan_manual(char *param, struct ChannelConf *target)
 
    if(scannername != NULL)
    {
-      irc_send("PRIVMSG %s :CHECK -> Checking '%s' for open proxies [%s]", 
+      irc_send("PRIVMSG %s :CHECK -> Checking '%s' for open proxies [%s]",
                 target->name, ip,  scannername);
    }
    else
@@ -1147,7 +1149,7 @@ void scan_manual(char *param, struct ChannelConf *target)
          ss->scans++; /* Increase scan count only if OPM_SUCCESS */
    }
 
-   /* If all of the scanners gave !OPM_SUCCESS and there were no dnsbl checks, 
+   /* If all of the scanners gave !OPM_SUCCESS and there were no dnsbl checks,
       cleanup here */
    if(ss->scans == 0)
    {
@@ -1158,7 +1160,7 @@ void scan_manual(char *param, struct ChannelConf *target)
                scannername);
       }
 
-      irc_send("PRIVMSG %s :CHECK -> No scans active on '%s', aborting scan.", 
+      irc_send("PRIVMSG %s :CHECK -> No scans active on '%s', aborting scan.",
                 ss->manual_target->name, ss->ip);
       scan_free(ss);
    }
@@ -1167,15 +1169,15 @@ void scan_manual(char *param, struct ChannelConf *target)
 
 
 /* scan_checkexempt
- * 
+ *
  *    Check mask against exempt list.
- * 
+ *
  * Parameters:
  *     mask: Mask to check
- * 
+ *
  * Return:
  *     1 if mask is in list
- *     0 if mask is not in list 
+ *     0 if mask is not in list
  */
 
 int scan_checkexempt(char *mask, char *ipmask)

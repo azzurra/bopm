@@ -2,24 +2,24 @@
 
 /*
 Copyright (C) 2002  Erik Fears
- 
+
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
- 
+
       Foundation, Inc.
       59 Temple Place - Suite 330
       Boston, MA  02111-1307, USA.
- 
+
 */
 
 #include "setup.h"
@@ -86,11 +86,11 @@ static struct StatsHash STATS_PROXIES[] =
 
 /* stats_init
  *
- *    Perform initialization of bopm stats 
+ *    Perform initialization of bopm stats
  *
  * Parameters: NONE
  * Return: NONE
- * 
+ *
  */
 
 void stats_init(void)
@@ -108,7 +108,7 @@ void stats_init(void)
  *
  * Parameters: NONE
  * Return: NONE
- * 
+ *
  */
 
 void stats_openproxy(int type)
@@ -129,7 +129,7 @@ void stats_openproxy(int type)
  *
  * Parameters: NONE
  * Return: NONE
- * 
+ *
  */
 
 
@@ -184,7 +184,7 @@ void stats_dnsblsend(void)
  *
  * Parameters: NONE
  * Return: NONE
- * 
+ *
  */
 
 void stats_output(char *target)
@@ -228,7 +228,7 @@ void stats_output(char *target)
    irc_send("PRIVMSG %s :Number of connects: %u (%.2f/minute)",
             target, STATS_CONNECTIONS, STATS_CONNECTIONS ?
             (float)STATS_CONNECTIONS / ((float)uptime / 60.0) : 0.0);
-  irc_send("PRIVMSG %s :We are using \002%s\002", target, (cybon) ? "AKILLs" : "KLINEs");
+   irc_send("PRIVMSG %s :We are using \002%s\002", target, (cybon) ? "AKILLs" : "KLINEs");
 }
 
 

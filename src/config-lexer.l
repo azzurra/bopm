@@ -89,7 +89,7 @@ whitespace             [ \t\r]*
                                  return STRING;
                               }
                            }
-             
+
                         }
 
 AWAY                    { return AWAY;         }
@@ -135,10 +135,10 @@ TYPE                    { return TYPE;         }
 USER                    { return USER;         }
 USERNAME                { return USERNAME;     }
 VHOST                   { return VHOST;        }
-CYBNICK			{ return CYBNICK;      }
-CYBHOST			{ return CYBHOST;      }
-CYBIDENT		{ return CYBIDENT;     }
-AKILL			{ return AKILL;        }
+CYBNICK                 { return CYBNICK;      }
+CYBHOST                 { return CYBHOST;      }
+CYBIDENT                { return CYBIDENT;     }
+AKILL                   { return AKILL;        }
 
 HTTP                    {
                           yylval.number = OPM_TYPE_HTTP;
@@ -172,7 +172,7 @@ ROUTER                  {
 
 
 [0-9]+                  {
-                           yylval.number=atoi(yytext); 
+                           yylval.number=atoi(yytext);
                            return NUMBER;
                         }
 
@@ -212,15 +212,15 @@ OFF                      {
 
 
 
-\n.*                    { 
-                           strcpy(linebuf, yytext+1); 
-                           linenum++; 
-                           yyless(1); 
+\n.*                    {
+                           strcpy(linebuf, yytext+1);
+                           linenum++;
+                           yyless(1);
                         }
 
 {whitespace}            /* ignore whitespace */;
 
-.                       return yytext[0]; 
+.                       return yytext[0];
 
 %%
 

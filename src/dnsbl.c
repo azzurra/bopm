@@ -2,24 +2,24 @@
 
 /*
 Copyright (C) 2002-2003  Erik Fears
- 
+
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
- 
+
       Foundation, Inc.
       59 Temple Place - Suite 330
       Boston, MA  02111-1307, USA.
- 
+
 */
 
 #include "setup.h"
@@ -77,7 +77,7 @@ void dnsbl_add(struct scan_struct *ss)
 
    LIST_FOREACH(p, OpmItem->blacklists->head)
    {
-		bl = p->data;
+      bl = p->data;
 
 #ifdef WORDS_BIGENDIAN
       snprintf(lookup, 128, "%d.%d.%d.%d.%s", a, b, c, d, bl->name);
@@ -87,7 +87,7 @@ void dnsbl_add(struct scan_struct *ss)
 
       ds = MyMalloc(sizeof *ds);
       ds->ss = ss;
-      ds->bl = bl; 
+      ds->bl = bl;
 
       if(OPT_DEBUG)
          log_printf("DNSBL -> Passed '%s' to resolver", lookup);
@@ -104,15 +104,15 @@ void dnsbl_add(struct scan_struct *ss)
    }
 }
 
-static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl, 
-		unsigned char type)
+static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
+                           unsigned char type)
 {
    char text_type[128];
    struct BlacklistReplyConf *item;
    node_t *p;
-   
+
    text_type[0] = '\0';
-   
+
    if(bl->type == A_BITMASK)
    {
       LIST_FOREACH(p, bl->reply->head)
@@ -141,7 +141,7 @@ static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
          }
       }
    }
-   
+
    if(text_type[0] == '\0' && bl->ban_unknown == 0)
    {
       if(OPT_DEBUG)
@@ -152,9 +152,9 @@ static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
    if(ss->manual_target)
    {
       if (cybon)
-      	scan_positive(ss, (bl->akill[0] ? bl->akill : IRCItem->akill), text_type);
+         scan_positive(ss, (bl->akill[0] ? bl->akill : IRCItem->akill), text_type);
       else
-	scan_positive(ss, (bl->kline[0] ? bl->kline : IRCItem->kline), text_type);
+         scan_positive(ss, (bl->kline[0] ? bl->kline : IRCItem->kline), text_type);
 
       irc_send("PRIVMSG %s :CHECK -> DNSBL -> %s appears in BL zone %s (%s)",
             ss->manual_target->name, ss->ip, bl->name, text_type);
@@ -166,9 +166,9 @@ static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
    {
       /* Only report it if no other scans have found positives yet. */
       if (cybon)
-      	scan_positive(ss, (bl->akill[0] ? bl->akill : IRCItem->akill), text_type);
+         scan_positive(ss, (bl->akill[0] ? bl->akill : IRCItem->akill), text_type);
       else
-	scan_positive(ss, (bl->kline[0] ? bl->kline : IRCItem->kline), text_type);
+         scan_positive(ss, (bl->kline[0] ? bl->kline : IRCItem->kline), text_type);
 
       irc_send_channels("DNSBL -> %s!%s@%s appears in BL zone %s (%s)",
             ss->irc_nick, ss->irc_username, ss->irc_hostname, bl->name,
@@ -184,7 +184,7 @@ static void dnsbl_positive(struct scan_struct *ss, struct BlacklistConf *bl,
 
 void dnsbl_result(struct firedns_result *res)
 {
-	struct dnsbl_scan *ds = res->info;
+   struct dnsbl_scan *ds = res->info;
 
    if(OPT_DEBUG)
       log_printf("DNSBL -> Lookup result for %s!%s@%s (%s) %d.%d.%d.%d (error: %d)",
@@ -201,16 +201,16 @@ void dnsbl_result(struct firedns_result *res)
    if(res->text[0] == '\0' && fdns_errno == FDNS_ERR_NXDOMAIN)
    {
       if(ds->ss->manual_target != NULL)
-         irc_send("PRIVMSG %s :CHECK -> DNSBL -> %s does not appear in BL zone %s", 
+         irc_send("PRIVMSG %s :CHECK -> DNSBL -> %s does not appear in BL zone %s",
                    ds->ss->manual_target->name, ds->ss->ip,
                     (strlen(ds->ss->ip) < strlen(res->lookup))
-						   ? (res->lookup + strlen(ds->ss->ip) + 1)
-							: res->lookup);
+                     ? (res->lookup + strlen(ds->ss->ip) + 1)
+                     : res->lookup);
 
 
       ds->ss->scans--;            /* we are done with ss here */
       scan_checkfinished(ds->ss); /* this could free ss, don't use ss after this point */
-		MyFree(ds);                   /* No longer need our information */ 
+      MyFree(ds);                   /* No longer need our information */
       return;
    }
 
@@ -219,18 +219,18 @@ void dnsbl_result(struct firedns_result *res)
    if(fdns_errno == FDNS_ERR_NONE)
       dnsbl_positive(ds->ss, ds->bl, (unsigned char)res->text[3]);
    else
-	{
+   {
       log_printf("DNSBL -> Lookup error on %s: %s", res->lookup,
-	      firedns_strerror(fdns_errno));
-		if(fdns_errno != FDNS_ERR_TIMEOUT)
-			irc_send_channels("DNSBL -> Lookup error on %s: %s", res->lookup,
-				firedns_strerror(fdns_errno));
-	}
+                 firedns_strerror(fdns_errno));
+      if(fdns_errno != FDNS_ERR_TIMEOUT)
+         irc_send_channels("DNSBL -> Lookup error on %s: %s", res->lookup,
+                           firedns_strerror(fdns_errno));
+   }
 
    /* Check if ss has any remaining scans */
    ds->ss->scans--; /* We are done with ss here */
    scan_checkfinished(ds->ss); /* this could free ss, don't use ss after this point */
-	MyFree(ds);                   /* Finished with dnsbl_scan too */
+   MyFree(ds);                   /* Finished with dnsbl_scan too */
 }
 
 void dnsbl_cycle(void)

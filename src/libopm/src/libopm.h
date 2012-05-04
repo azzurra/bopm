@@ -15,13 +15,13 @@ typedef struct  _OPM_CONNECTION       OPM_CONNECTION_T;
 typedef struct  _OPM_PROTOCOL_CONFIG  OPM_PROTOCOL_CONFIG_T;
 typedef struct  _OPM_PROTOCOL         OPM_PROTOCOL_T;
 
-/*  Types of hard coded proxy READ/WRITE functions which are 
+/*  Types of hard coded proxy READ/WRITE functions which are
    setup in a table in libopm.c */
 
 typedef int OPM_PROXYWRITE_T (OPM_T *, OPM_SCAN_T *, OPM_CONNECTION_T *);
 typedef int OPM_PROXYREAD_T  (OPM_T *, OPM_SCAN_T *, OPM_CONNECTION_T *);
 
-struct _OPM_SCAN { 
+struct _OPM_SCAN {
    opm_sockaddr         addr;           /* Address in byte order of remote client */
    OPM_REMOTE_T        *remote;         /* Pointed to the OPM_REMOTE_T for this scan, passed by client */
    OPM_LIST_T          *connections;    /* List of individual connections of this scan (1 for each protocol) */

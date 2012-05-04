@@ -82,7 +82,7 @@ struct ScannerConf
    int     max_read;
 
    list_t *target_string;
-	int     target_string_created;
+   int     target_string_created;
 };
 
 struct ProtocolConf
@@ -107,7 +107,7 @@ enum BlacklistType {
 struct BlacklistConf
 {
    char   *name;
-   char	  *akill;
+   char   *akill;
    char   *kline;
    enum BlacklistType type;
    int     ban_unknown;

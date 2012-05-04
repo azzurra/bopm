@@ -3,20 +3,20 @@
 /*
 firedns.c - firedns library
 Copyright (C) 2002 Ian Gulliver
- 
+
 This file has been gutted and mucked with for use in BOPM - see the
 real library at http://ares.penguinhosting.net/~ian/ before you judge
 firedns based on this..
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as
 published by the Free Software Foundation.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -267,7 +267,7 @@ struct in_addr *firedns_resolveip4(const char * const name)
 
    if(inet_aton(name, &addr))
       return &addr;
-   
+
    return (struct in_addr *) firedns_resolveip(FDNS_QRY_A, name);
 }
 
@@ -296,7 +296,7 @@ char *firedns_resolveip(int type, const char * const name)
       i = select(fd + 1, &s, NULL, NULL, &tv);
 
       result = firedns_getresult(fd);
-      
+
       if (fdns_errno == FDNS_ERR_NONE)
       /* Return is from static memory in getresult, so there is no need to
          copy it until the next call to firedns. */
@@ -325,7 +325,7 @@ int firedns_getip(int type, const char * const name, void *info)
    s->type = type;
    strncpy(s->lookup, name, 256);
    s->info = info;
-   
+
    if(fdns_fdinuse >= OptionsItem->dns_fdlimit)
    {
       fdns_errno = FDNS_ERR_FDLIMIT;
@@ -335,7 +335,7 @@ int firedns_getip(int type, const char * const name, void *info)
          MyFree(s);
       }else{
          node = node_create(s);
-         list_add(CONNECTIONS, node);      
+         list_add(CONNECTIONS, node);
       }
       return -1;
    }
@@ -439,7 +439,7 @@ static int firedns_send_requests(struct s_header *h, struct s_connection *s,
 #ifdef IPV6
    struct sockaddr_in6 addr6;
 #endif
-   
+
    /* set header flags */
    h->flags1 = 0 | FLAGS1_MASK_RD;
    h->flags2 = 0;
@@ -561,7 +561,7 @@ static int firedns_send_requests(struct s_header *h, struct s_connection *s,
       fdns_errno = FDNS_ERR_NETWORK;
       return -1;
    }
-   
+
    time(&s->start);
    fdns_fdinuse++;
    fdns_errno = FDNS_ERR_NONE;

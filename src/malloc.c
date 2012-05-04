@@ -28,13 +28,13 @@
 
 
 /* MyMalloc
- *  
+ *
  *   A wrapper function for malloc(), for catching memory issues
  *   and error handling.
  *
  * Parameters
  *    bytes: amount in bytes to allocate
- *    
+ *
  * Return:
  *    Pointer to allocated memory
  */
@@ -55,7 +55,7 @@ void *MyMalloc(size_t bytes)
  *
  *  Parameters:
  *     var: pointer to memory to free
- *     
+ *
  *  Return:
  *     None
  */

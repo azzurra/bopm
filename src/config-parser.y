@@ -81,7 +81,7 @@ void *tmp;        /* Variable to temporarily hold nodes before insertion to list
 %token CYBNICK
 %token CYBHOST
 %token CYBIDENT
-%union 
+%union
 {
         int number;
         char *string;
@@ -113,13 +113,13 @@ options_items: /* Empty */                |
                options_items options_item |
                options_item;
 
-options_item: options_negcache |
-              options_pidfile |
+options_item: options_negcache    |
+              options_pidfile     |
               options_dns_fdlimit |
-              options_scanlog |
-	      options_cybnick |
-	      options_cybhost |
-	      options_cybident |
+              options_scanlog     |
+              options_cybnick     |
+              options_cybhost     |
+              options_cybident    |
               error;
 
 options_negcache: NEGCACHE '=' NUMBER ';'
@@ -134,18 +134,18 @@ options_pidfile: PIDFILE '=' STRING ';'
 };
 options_cybnick: CYBNICK '=' STRING ';'
 {
-	MyFree(OptionsItem->cybnick);
-	OptionsItem->cybnick = DupString($3);
+   MyFree(OptionsItem->cybnick);
+   OptionsItem->cybnick = DupString($3);
 };
 options_cybhost: CYBHOST '=' STRING ';'
 {
-	MyFree(OptionsItem->cybhost);
-	OptionsItem->cybhost = DupString($3);
+   MyFree(OptionsItem->cybhost);
+   OptionsItem->cybhost = DupString($3);
 };
 options_cybident: CYBIDENT '=' STRING ';'
 {
-	MyFree(OptionsItem->cybident);
-	OptionsItem->cybident = DupString($3);
+   MyFree(OptionsItem->cybident);
+   OptionsItem->cybident = DupString($3);
 };
 
 options_dns_fdlimit: DNS_FDLIMIT '=' NUMBER ';'
@@ -169,13 +169,13 @@ irc_items: irc_items irc_item |
 irc_item: irc_away      |
           irc_connregex |
           irc_kline     |
-	  irc_akill	|
+          irc_akill     |
           irc_nick      |
           irc_nickserv  |
           irc_mode      |
           irc_oper      |
           irc_password  |
-          irc_port      | 
+          irc_port      |
           irc_realname  |
           irc_server    |
           irc_username  |
@@ -197,8 +197,8 @@ irc_kline: KLINE '=' STRING ';'
 };
 irc_akill: AKILL '=' STRING ';'
 {
-	MyFree(IRCItem->akill);
-	IRCItem->akill = DupString($3);
+   MyFree(IRCItem->akill);
+   IRCItem->akill = DupString($3);
 }
 irc_mode: MODE '=' STRING ';'
 {
@@ -276,7 +276,7 @@ irc_connregex: CONNREGEX '=' STRING ';'
 
 /************************** CHANNEL BLOCK *************************/
 
-channel_entry: 
+channel_entry:
 {
    node_t *node;
    struct ChannelConf *item;
@@ -327,7 +327,7 @@ channel_invite: INVITE '=' STRING ';'
 
 /*************************** USER BLOCK ***************************/
 
-user_entry: 
+user_entry:
 {
    node_t *node;
    struct UserConf *item;
@@ -340,8 +340,8 @@ user_entry:
    node = node_create(item);
    list_add(UserItemList, node);
 
-   tmp = (void *) item; 
-} 
+   tmp = (void *) item;
+}
 USER '{' user_items  '}' ';' ;
 
 user_items: user_items user_item |
@@ -383,33 +383,33 @@ scanner_entry:
    /* Setup ScannerConf defaults */
    item->name = DupString("undefined");
 
-	if(LIST_SIZE(ScannerItemList) > 0)
-	{
-	   olditem = ScannerItemList->tail->data;
+   if(LIST_SIZE(ScannerItemList) > 0)
+   {
+      olditem = ScannerItemList->tail->data;
 
-		item->vhost = DupString(olditem->vhost);
-		item->fd = olditem->fd;
-		item->target_ip = DupString(olditem->target_ip);
-		item->target_port = olditem->target_port;
-		item->timeout = olditem->timeout;
-		item->max_read = olditem->max_read;
+      item->vhost = DupString(olditem->vhost);
+      item->fd = olditem->fd;
+      item->target_ip = DupString(olditem->target_ip);
+      item->target_port = olditem->target_port;
+      item->timeout = olditem->timeout;
+      item->max_read = olditem->max_read;
 
-		item->target_string = olditem->target_string;
-		item->target_string_created = 0;
-	}
-	else
-	{
-	   item->vhost = DupString("0.0.0.0");
+      item->target_string = olditem->target_string;
+      item->target_string_created = 0;
+   }
+   else
+   {
+      item->vhost = DupString("0.0.0.0");
       item->fd = 512;
       item->target_ip = DupString("127.0.0.1");
       item->target_port = 6667;
       item->timeout = 30;
       item->max_read = 4096;
-		
-		item->target_string = list_create();
-		item->target_string_created = 1;
-	}
-	
+
+      item->target_string = list_create();
+      item->target_string_created = 1;
+   }
+
    item->protocols = list_create();
 
    node = node_create(item);
@@ -461,11 +461,11 @@ scanner_target_string: TARGET_STRING '=' STRING ';'
    node_t *node;
    node = node_create($3);
 
-	if(item->target_string_created == 0)
-	{
-	   item->target_string = list_create();
-		item->target_string_created = 1;
-	}
+   if(item->target_string_created == 0)
+   {
+      item->target_string = list_create();
+      item->target_string_created = 1;
+   }
 
    list_add(item->target_string, node);
 };
@@ -500,7 +500,7 @@ scanner_protocol: PROTOCOL '=' PROTOCOLTYPE ':' NUMBER ';'
    struct ScannerConf  *item2;
 
    node_t *node;
- 
+
    item = MyMalloc(sizeof *item);
    item->type = $3;
    item->port = $5;
@@ -572,7 +572,7 @@ blacklist_items: /* Empty */                 |
 
 blacklist_item: blacklist_name        |
                 blacklist_type        |
-		blacklist_akill	      |
+                blacklist_akill       |
                 blacklist_kline       |
                 blacklist_ban_unknown |
                 blacklist_reply       |
@@ -593,15 +593,15 @@ blacklist_kline: KLINE '=' STRING ';' {
 };
 
 blacklist_akill: AKILL '=' STRING ';' {
-	struct BlacklistConf *item = tmp;
+   struct BlacklistConf *item = tmp;
 
-	MyFree(item->akill);
-	item->akill = DupString($3);
+   MyFree(item->akill);
+   item->akill = DupString($3);
 }
 
 blacklist_type: TYPE '=' STRING ';' {
    struct BlacklistConf *item = tmp;
-   
+
    if(strcmp("A record bitmask", $3) == 0)
       item->type = A_BITMASK;
    else if(strcmp("A record reply", $3) == 0)

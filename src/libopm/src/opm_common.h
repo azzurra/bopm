@@ -15,7 +15,7 @@ struct _libopm_list {
 
 struct _libopm_node {
 
-   struct _libopm_node *next; 
+   struct _libopm_node *next;
    struct _libopm_node *prev;
 
    void *data;

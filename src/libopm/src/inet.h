@@ -1,4 +1,4 @@
-#ifndef INET_H 
+#ifndef INET_H
 #define INET_H
 
 #include <sys/types.h>

@@ -11,8 +11,8 @@ extern void dnsbl_report(struct scan_struct *ss);
 
 
 struct dnsbl_scan {
-	struct scan_struct   *ss;
-	struct BlacklistConf *bl;
+   struct scan_struct   *ss;
+   struct BlacklistConf *bl;
 };
 
 #endif

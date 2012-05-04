@@ -1,4 +1,4 @@
-/* vim: set shiftwidth=3 softtabstop=3 expandtab: */ 
+/* vim: set shiftwidth=3 softtabstop=3 expandtab: */
 
 /*
  * Copyright (C) 2002  Andy Smith
@@ -17,8 +17,8 @@
  * along with this program; if not, write to
  *
  *       The Free Software Foundation, Inc.
- *	59 Temple Place - Suite 330
- *	Boston, MA  02111-1307, USA
+ *       59 Temple Place - Suite 330
+ *       Boston, MA  02111-1307, USA
  */
 
 #include "setup.h"
@@ -45,26 +45,26 @@ RCSID("$Id: compat.c,v 1.3 2003/01/11 06:18:41 andy Exp $");
  */
 int libopm_inet_aton(const char *cp, struct in_addr *inp)
 {
-	unsigned int a1, a2, a3, a4;
-	unsigned long ret;
+   unsigned int a1, a2, a3, a4;
+   unsigned long ret;
 
-	if (strcmp(cp, "255.255.255.255") == 0) {
-		inp->s_addr = (unsigned) -1;
-		return 0;
-	}
+   if (strcmp(cp, "255.255.255.255") == 0) {
+      inp->s_addr = (unsigned) -1;
+      return 0;
+   }
 
-	if (sscanf(cp, "%u.%u.%u.%u", &a1, &a2, &a3, &a4) != 4 ||
-	    a1 > 255 || a2 > 255 || a3 > 255 || a4 > 255) {
-		return 0;
-	}
+   if (sscanf(cp, "%u.%u.%u.%u", &a1, &a2, &a3, &a4) != 4 ||
+       a1 > 255 || a2 > 255 || a3 > 255 || a4 > 255) {
+      return 0;
+   }
 
-	ret = (a1 << 24) | (a2 << 16) | (a3 << 8) | a4;
+   ret = (a1 << 24) | (a2 << 16) | (a3 << 8) | a4;
 
-	inp->s_addr = htonl(ret);
-	
-	if (inp->s_addr == (unsigned) -1) {
-		return 0;
-	}
-	return 1;
+   inp->s_addr = htonl(ret);
+
+   if (inp->s_addr == (unsigned) -1) {
+      return 0;
+   }
+   return 1;
 }
 #endif

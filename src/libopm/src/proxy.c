@@ -49,9 +49,9 @@ int libopm_proxy_http_write(OPM_T *scanner, OPM_SCAN_T *scan, OPM_CONNECTION_T *
    USE_VAR(scan);
 
    snprintf(SENDBUF, SENDBUFLEN, "CONNECT %s:%d HTTP/1.0\r\n\r\n",
-      (char *) libopm_config(scanner->config, OPM_CONFIG_SCAN_IP), 
+      (char *) libopm_config(scanner->config, OPM_CONFIG_SCAN_IP),
       *(int *) libopm_config(scanner->config, OPM_CONFIG_SCAN_PORT));
- 
+
    if(send(conn->fd, SENDBUF, strlen(SENDBUF), 0) == -1)
       return 0; /* Return error code ? */
 
@@ -77,12 +77,12 @@ int libopm_proxy_socks4_write(OPM_T *scanner, OPM_SCAN_T *scan, OPM_CONNECTION_T
    int len, scan_port;
    char *scan_ip;
    USE_VAR(scan);
-         
+
    scan_ip = (char *) libopm_config(scanner->config, OPM_CONFIG_SCAN_IP);
    scan_port = *(int *) libopm_config(scanner->config, OPM_CONFIG_SCAN_PORT);
 
-   if (inet_aton(scan_ip, &addr) == 0)   
-      ; /* handle error */ 
+   if (inet_aton(scan_ip, &addr) == 0)
+      ; /* handle error */
 
    laddr = htonl(addr.s_addr);
 
@@ -145,12 +145,12 @@ int libopm_proxy_socks5_write(OPM_T *scanner, OPM_SCAN_T *scan, OPM_CONNECTION_T
    int len, scan_port;
    char *scan_ip;
    USE_VAR(scan);
-   
+
    scan_ip = (char *) libopm_config(scanner->config, OPM_CONFIG_SCAN_IP);
    scan_port = *(int *) libopm_config(scanner->config, OPM_CONFIG_SCAN_PORT);
 
-   if (inet_aton(scan_ip, &addr) == 0)   
-      ; /* handle error */ 
+   if (inet_aton(scan_ip, &addr) == 0)
+      ; /* handle error */
 
    laddr = htonl(addr.s_addr);
 

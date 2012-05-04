@@ -1,4 +1,4 @@
-/* vim: set shiftwidth=3 softtabstop=3 expandtab: */ 
+/* vim: set shiftwidth=3 softtabstop=3 expandtab: */
 
 /*
  * Copyright (C) 2002-2003  Erik Fears
@@ -131,10 +131,10 @@ static struct CommandHash COMMAND_TABLE[] = {
          {"INVITE",               m_invite         },
          {"001",                  m_perform        },
          {"302",                  m_userhost       },
- 	 {"600",		  m_notify_on	   }, /*RPL_LOGON*/
-	 {"601",		  m_notify_off	   }, /*RPL_LOGOFF*/
-	 {"605",		  m_notify_off	   }, /*RPL_NOWOFF*/
-	 {"604",		  m_notify_on	   }, /*RPL_NOWON*/
+         {"600",                  m_notify_on      }, /*RPL_LOGON*/
+         {"601",                  m_notify_off     }, /*RPL_LOGOFF*/
+         {"605",                  m_notify_off     }, /*RPL_NOWOFF*/
+         {"604",                  m_notify_on      }, /*RPL_NOWON*/
          {"471",                  m_cannot_join    },
          {"473",                  m_cannot_join    },
          {"474",                  m_cannot_join    },
@@ -168,7 +168,7 @@ void irc_cycle(void)
       /* Connect to remote host. */
       irc_connect();
 
-      return;      /* In case connect() immediately failed */ 
+      return;      /* In case connect() immediately failed */
   }
 
    IRC_TIMEOUT.tv_sec  = 0;
@@ -200,9 +200,9 @@ void irc_cycle(void)
  *
  *    Resolve IRC host and perform other initialization.
  *
- * Parameters: 
+ * Parameters:
  *    None
- * 
+ *
  * Return:
  *    None
  *
@@ -334,7 +334,7 @@ static void irc_init(void)
  * Parameters:
  *    data: Format of data to send
  *    ...: varargs to format with
- * 
+ *
  * Return: NONE
  */
 
@@ -463,10 +463,10 @@ static void irc_reconnect(void)
 {
 
    time_t present;
-   
+
    time(&present);
-  
-   /* Only try to reconnect every RECONNECT_INTERVAL seconds */ 
+
+   /* Only try to reconnect every RECONNECT_INTERVAL seconds */
    if((present - IRC_LASTRECONNECT) < RECONNECTINTERVAL)
    {
       /* Sleep to avoid excessive CPU */
@@ -490,7 +490,7 @@ static void irc_reconnect(void)
 /* irc_read
  *
  *    irc_read is called my irc_cycle when new data is ready to be
- *    read from the irc server. 
+ *    read from the irc server.
  *
  * Parameters: NONE
  * Return: NONE
@@ -551,11 +551,11 @@ static void irc_parse(void)
    unsigned int i;
 
    /*
-      parv stores the parsed token, parc is the count of the parsed 
+      parv stores the parsed token, parc is the count of the parsed
       tokens
-     
+
       parv[0] is ALWAYS the source, and is the server name of the source
-      did not exist 
+      did not exist
    */
 
    static char            *parv[17];
@@ -769,7 +769,7 @@ static struct UserInfo *userinfo_create(char *source)
  *
  * Parameters:
  *    source: struct to free
- * 
+ *
  * Return: None
  *
  */
@@ -824,8 +824,8 @@ static void m_perform(char **parv, unsigned int parc, char *msg, struct UserInfo
 
    /*Add CybCop to watch list*/
    if (OptionsItem->cybnick != NULL && strlen(OptionsItem->cybnick) > 0) {
-   	irc_send("WATCH +%s", OptionsItem->cybnick);
-	log_printf("IRC -> Added CybCop nick (%s) to WATCH list", OptionsItem->cybnick);
+      irc_send("WATCH +%s", OptionsItem->cybnick);
+      log_printf("IRC -> Added CybCop nick (%s) to WATCH list", OptionsItem->cybnick);
    }
 
    /* Set Away */
@@ -891,7 +891,7 @@ static void m_ping(char **parv, unsigned int parc, char *msg, struct UserInfo *s
 static void m_invite(char **parv, unsigned int parc, char *msg, struct UserInfo *source_p)
 {
    struct ChannelConf *channel;
-   
+
    USE_VAR(msg);
    USE_VAR(source_p);
 
@@ -948,7 +948,7 @@ static void m_privmsg(char **parv, unsigned int parc, char *msg, struct UserInfo
    nick_len = strcspn(parv[3], " :,");
    if(nick_len < 3 && strlen(IRCItem->nick) >= 3)
       nick_len = 3;
-   
+
    /* message is a command */
    if(strncasecmp(parv[3], IRCItem->nick, nick_len) == 0  ||
          strncasecmp(parv[3], "!all", 4) == 0)
@@ -1055,12 +1055,12 @@ static void m_notice(char **parv, unsigned int parc, char *msg, struct UserInfo 
    /*
        Offsets for data in the connection notice:
 
-       NICKNAME: pmatch[1].rm_so  TO  pmatch[1].rm_eo 
+       NICKNAME: pmatch[1].rm_so  TO  pmatch[1].rm_eo
        USERNAME: pmatch[2].rm_so  TO  pmatch[2].rm_eo
        HOSTNAME: pmatch[3].rm_so  TO  pmatch[3].rm_eo
        IP      : pmatch[4].rm_so  TO  pmatch[4].rm_eo
 
-    */ 
+    */
 
    for(i = 0; i < 4; i++)
    {
@@ -1175,22 +1175,22 @@ static void m_kill(char **parv, unsigned int parc, char *msg, struct UserInfo *s
 
 void m_notify_on(char **parv, unsigned int parc, char *msg, struct UserInfo *source_p)
 {
-	if (strcasecmp(parv[3], OptionsItem->cybnick))
-		return; /*This is not what we need!*/
+   if (strcasecmp(parv[3], OptionsItem->cybnick))
+      return; /*This is not what we need!*/
 
-	if (!cybon)
-	{
-		if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
-		{
-			cybon = 1;
-			log_printf("CybCop is now ONLINE! I'm gonna adding AKILLs instead of KLINEs");
-		}
-		else
-		{
-			irc_send_channels("\002WARNING:\002: CybCop is online but host or ident don't match, for security reason I'm not going to use CybCop, please check your config or Q:Lines!");
-			irc_send_channels("I was expecting: %s!%s@%s but got %s!%s@%s", OptionsItem->cybnick, OptionsItem->cybident, OptionsItem->cybhost, parv[3], parv[4], parv[5]);
-		}
-	}
+   if (!cybon)
+   {
+      if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
+      {
+         cybon = 1;
+         log_printf("CybCop is now ONLINE! I'm gonna adding AKILLs instead of KLINEs");
+      }
+      else
+      {
+         irc_send_channels("\002WARNING:\002: CybCop is online but host or ident don't match, for security reason I'm not going to use CybCop, please check your config or Q:Lines!");
+         irc_send_channels("I was expecting: %s!%s@%s but got %s!%s@%s", OptionsItem->cybnick, OptionsItem->cybident, OptionsItem->cybhost, parv[3], parv[4], parv[5]);
+      }
+   }
 }
 /* m_notify_off
  *
@@ -1207,29 +1207,29 @@ void m_notify_on(char **parv, unsigned int parc, char *msg, struct UserInfo *sou
 
 void m_notify_off(char **parv, unsigned int parc, char *msg, struct UserInfo *suorce_p)
 {
-	if (strcasecmp(parv[3], OptionsItem->cybnick))
-		return; /*This is not what we need!*/
+   if (strcasecmp(parv[3], OptionsItem->cybnick))
+      return; /*This is not what we need!*/
 
-	if (cybon)
-	{
-		if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
-		{
-			cybon = 0;
-			log_printf("CybCop is now OFFLINE! I'm gonna adding KLINEs instead of AKILLs");
-		}
-		else if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcmp(parv[4], "*") && ! strcmp(parv[5], "*"))
-		{
-			cybon = 0;
-			log_printf("CybCop is now OFFLINE! I'm gonna adding KLINEs instead of AKILLs");
-		}
-		else
-		{
-			cybon = 0;
-			log_printf("CybCop is now OFFLINE! I'm gonna adding AKILLs instead of KLINEs");
-			irc_send_channels("\002WARNING:\002: CybCop is offline but host or ident in numeric 605 don't match, please check your config or Q:Lines!");
-			irc_send_channels("I was expecting: %s!%s@%s but got %s!%s@%s", OptionsItem->cybnick, OptionsItem->cybident, OptionsItem->cybhost, parv[3], parv[4], parv[5]);
-		}
-	}
+   if (cybon)
+   {
+      if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcasecmp(parv[4], OptionsItem->cybident) && !strcasecmp(parv[5], OptionsItem->cybhost))
+      {
+         cybon = 0;
+         log_printf("CybCop is now OFFLINE! I'm gonna adding KLINEs instead of AKILLs");
+      }
+      else if (!strcasecmp(parv[3], OptionsItem->cybnick) && !strcmp(parv[4], "*") && ! strcmp(parv[5], "*"))
+      {
+         cybon = 0;
+         log_printf("CybCop is now OFFLINE! I'm gonna adding KLINEs instead of AKILLs");
+      }
+      else
+      {
+         cybon = 0;
+         log_printf("CybCop is now OFFLINE! I'm gonna adding AKILLs instead of KLINEs");
+         irc_send_channels("\002WARNING:\002: CybCop is offline but host or ident in numeric 605 don't match, please check your config or Q:Lines!");
+         irc_send_channels("I was expecting: %s!%s@%s but got %s!%s@%s", OptionsItem->cybnick, OptionsItem->cybident, OptionsItem->cybhost, parv[3], parv[4], parv[5]);
+      }
+   }
 
 }
 

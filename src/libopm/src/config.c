@@ -76,7 +76,7 @@ OPM_CONFIG_T *libopm_config_create()
 
       OPM_TYPE_INT     = 0
       OPM_TYPE_STRING  = ""
-      OPM_TYPE_ADDRESS = 0.0.0.0 
+      OPM_TYPE_ADDRESS = 0.0.0.0
       OPM_TYPE_STRINGLIST = empty list
    */
 
@@ -96,7 +96,7 @@ OPM_CONFIG_T *libopm_config_create()
          case OPM_TYPE_ADDRESS:
             ret->vars[i] = MyMalloc(sizeof(opm_sockaddr));
             memset((opm_sockaddr *) ret->vars[i], 0, sizeof(opm_sockaddr));
-            break; 
+            break;
 
          case OPM_TYPE_STRINGLIST:
             ret->vars[i] = libopm_list_create();
@@ -117,7 +117,7 @@ OPM_CONFIG_T *libopm_config_create()
  *
  * Parameters:
  *    config: Structure to free/cleanup
- *    
+ *
  * Return:
  *    None
  */
@@ -142,7 +142,7 @@ void libopm_config_free(OPM_CONFIG_T *config)
             LIST_FOREACH_SAFE(p, next, list->head)
             {
                MyFree(p->data);
-               MyFree(p); 
+               MyFree(p);
             }
             break;
          default:
@@ -165,7 +165,7 @@ void libopm_config_free(OPM_CONFIG_T *config)
  * Parameters:
  *    config: Config struct to set parameters on
  *    key:    Variable within the struct to set
- *    value:  Address of value to set 
+ *    value:  Address of value to set
  *
  * Return:
  *    1: Variable was set
@@ -179,9 +179,9 @@ OPM_ERR_T libopm_config_set(OPM_CONFIG_T *config, int key, void *value)
    OPM_NODE_T *node;
 
    num = sizeof(HASH) / sizeof(OPM_CONFIG_HASH_T);
-   
+
    if(key < 0 || key >= num)
-      return OPM_ERR_BADKEY; /* Return appropriate error code eventually */  
+      return OPM_ERR_BADKEY; /* Return appropriate error code eventually */
 
    switch(libopm_config_gettype(key))
    {
@@ -199,12 +199,12 @@ OPM_ERR_T libopm_config_set(OPM_CONFIG_T *config, int key, void *value)
          if( inet_pton(AF_INET, (char *) value, &( ((opm_sockaddr *)config->vars[key])->sa4.sin_addr))
                   <= 0)
             return OPM_ERR_BADVALUE; /* return appropriate err code */
-         break; 
+         break;
 
       case OPM_TYPE_STRINGLIST:
          node = libopm_node_create(strdup((char *) value));
          libopm_list_add((OPM_LIST_T *) config->vars[key], node);
-         break;                        
+         break;
 
       default:
          return OPM_ERR_BADKEY; /* return appropriate err code */
@@ -221,10 +221,10 @@ OPM_ERR_T libopm_config_set(OPM_CONFIG_T *config, int key, void *value)
 /* config_gettype
  *
  *    Get type of key.
- * 
+ *
  * Parameters:
  *    key: Key to get type of.
- *    
+ *
  * Return:
  *    TYPE_? of key
  */
@@ -238,14 +238,14 @@ int libopm_config_gettype(int key)
    for(i = 0; i < num; i++)
       if(HASH[i].key == key)
          return HASH[i].type;
-       
+
    return 0;
 }
 
 /* config
  *
  *    Retrieve a specific config variable from
- *    an OPM_CONFIG_T struct. This is basically a 
+ *    an OPM_CONFIG_T struct. This is basically a
  *    wrapper to extracting the variable from the
  *    array.
  *

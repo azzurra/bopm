@@ -31,13 +31,13 @@ RCSID("$Id: malloc.c,v 1.10 2002/11/07 20:19:06 strtok Exp $");
 
 
 /* MyMalloc
- *  
+ *
  *   A wrapper function for malloc(), for catching memory issues
  *   and error handling.
  *
  * Parameters
  *    bytes: amount in bytes to allocate
- *    
+ *
  * Return:
  *    Pointer to allocated memory
  */
@@ -46,7 +46,7 @@ void *libopm_MyMalloc(size_t bytes)
 {
    void *ret = calloc(1, bytes);
 
-   assert(ret); 
+   assert(ret);
 
    return ret;
 }
@@ -59,7 +59,7 @@ void *libopm_MyMalloc(size_t bytes)
  *
  *  Parameters:
  *     var: pointer to memory to free
- *     
+ *
  *  Return:
  *     None
  */
