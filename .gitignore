@@ -30,3 +30,5 @@ missing
 *~
 ylwrap
 setup.h.in
+/bopm-*
+/*.tar.bz2

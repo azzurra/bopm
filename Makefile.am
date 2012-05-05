@@ -22,31 +22,31 @@ SUBDIRS = src
 
 data_DATA = bopm.conf.sample bopm.conf.blitzed exempt.conf.sample
 
-EXTRA_DIST = ChangeLog contrib INSTALL README bopm.conf.sample bopm.conf.blitzed network-bopm
+EXTRA_DIST = ChangeLog contrib INSTALL README bopm.conf.sample bopm.conf.blitzed exempt.conf.sample network-bopm
 
 install-data-local:
-	@if test -f $(sysconfdir)/bopm.conf ; then \
-		echo "$@ will not overwrite existing $(sysconfdir)/bopm.conf"; \
+	@if test -f $(DESTDIR)$(sysconfdir)/bopm.conf ; then \
+		echo "$@ will not overwrite existing $(DESTDIR)$(sysconfdir)/bopm.conf"; \
 	else \
-		$(mkinstalldirs) $(sysconfdir); \
-		echo "$(INSTALL_DATA) bopm.conf.sample $(sysconfdir)/bopm.conf"; \
-		$(INSTALL_DATA) bopm.conf.sample $(sysconfdir)/bopm.conf; \
+		$(mkinstalldirs) $(DESTDIR)$(sysconfdir); \
+		echo "$(INSTALL_DATA) $(srcdir)/bopm.conf.sample $(DESTDIR)$(sysconfdir)/bopm.conf"; \
+		$(INSTALL_DATA) $(srcdir)/bopm.conf.sample $(DESTDIR)$(sysconfdir)/bopm.conf; \
 	fi
-	@if test -f $(sysconfdir)/exempt.conf ; then \
-		echo "$@ will not overwrite existing $(sysconfdir)/exempt.conf"; \
+	@if test -f $(DESTDIR)$(sysconfdir)/exempt.conf ; then \
+		echo "$@ will not overwrite existing $(DESTDIR)$(sysconfdir)/exempt.conf"; \
 	else \
 		$(mkinstalldirs) $(sysconfdir); \
-		echo "$(INSTALL_DATA) exempt.conf.sample $(sysconfdir)/exempt.conf"; \
-		$(INSTALL_DATA) exempt.conf.sample $(sysconfdir)/exempt.conf; \
+		echo "$(INSTALL_DATA) $(srcdir)/exempt.conf.sample $(DESTDIR)$(sysconfdir)/exempt.conf"; \
+		$(INSTALL_DATA) $(srcdir)/exempt.conf.sample $(DESTDIR)$(sysconfdir)/exempt.conf; \
 	fi
 	$(mkinstalldirs) $(localstatedir)
 
 uninstall-local:
-	@if test -f $(sysconfdir)/bopm.conf ; then \
-		echo "rm -f $(sysconfdir)/bopm.conf"; \
-		$(RM) -f $(sysconfdir)/bopm.conf; \
+	@if test -f $(DESTDIR)$(sysconfdir)/bopm.conf ; then \
+		echo "rm -f $(DESTDIR)$(sysconfdir)/bopm.conf"; \
+		$(RM) -f $(DESTDIR)$(sysconfdir)/bopm.conf; \
 	fi
-	@if test -f $(sysconfdir)/exempt.conf ; then \
-		echo "rm -rf $(sysconfdir)/exempt.conf"; \
-		$(RM) -f $(sysconfdir)/exempt.conf; \
+	@if test -f $(DESTDIR)$(sysconfdir)/exempt.conf ; then \
+		echo "rm -f $(DESTDIR)$(sysconfdir)/exempt.conf"; \
+		$(RM) -f $(DESTDIR)$(sysconfdir)/exempt.conf; \
 	fi
