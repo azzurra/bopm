@@ -1,3 +1,4 @@
 /config-lexer.c
 /config-parser.c
 /config-parser.h
+/config-parser.output
