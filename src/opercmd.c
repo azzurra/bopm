@@ -42,6 +42,7 @@ along with this program; if not, write to the Free Software
 #include "malloc.h"
 #include "list.h"
 #include "stats.h"
+#include "main.h"
 
 /* List of active commands */
 
