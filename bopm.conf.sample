@@ -200,20 +200,24 @@ IRC {
 	connregex = "\\*\\*\\* Notice -- Client connecting: ([^ ]+) \\(([^@]+)@([^\\)]+)\\) \\[([0-9\\.]+)\\].*";
 
 	/*
-	 * "kline" controls the command used when an open proxy is confirmed.
-	 * We suggest applying a temporary (no more than a few hours) KLINE on the host.
+	 * "kline" controls the command sent when an open proxy is confirmed and
+	 * CybCop is not answering.  The name is historical: on this network the
+	 * command is an OperServ AKILL, which is network-wide and survives the
+	 * server that set it, unlike a K:Line.  Keep it temporary: six hours is
+	 * what we use.
 	 *
 	 * <WARNING>
          * Make sure if you need to change this string you also change the
-         * kline command for every DNSBL you enable below.
+         * command for every DNSBL you enable below.
 	 *
-         * Also note that some servers do not allow you to include ':' characters
-         * inside the KLINE message (e.g. for a http:// address).
+         * The reason takes no leading ':'; the PRIVMSG already opened the
+         * trailing parameter, and a second colon would end up in the ban
+         * reason the user reads.
 	 *
 	 * Users rewriting this message into something that isn't even a valid
 	 * IRC command is the single most common cause of support requests and
 	 * therefore WE WILL NOT SUPPORT YOU UNLESS YOU USE ONE OF THE EXAMPLE
-	 * KLINE COMMANDS BELOW.
+	 * COMMANDS BELOW.
 	 * </WARNING>
 	 *
 	 * That said, should you wish to customise this text, several
@@ -229,7 +233,7 @@ IRC {
          *  %d     Base-10 IP
 	 *
 	 */
-	kline = "KLINE 1440 *@%h :Open Proxy found on your host. Please visit www.azzurra.org/kline.php?mod=socks-proxy for more information.";
+	kline = "PRIVMSG OperServ :AKILL TIME 6h *@%h Open Proxy found on your host. Please visit www.azzurra.org/kline.php?mod=socks-proxy for more information.";
 	akill = "PRIVMSG %c :APMPRXAK %d %h %p %I X";
        
 	/*
@@ -312,7 +316,7 @@ OPM {
 	   /* The kline message sent for this specific blacklist, remember to put
 	    * the removal method in this.
 	    */
-	   kline = "KLINE 1440 *@%h :You have a host listed in the DroneBL. For more information, visit dronebl.org/lookup_branded.do?ip=%i&network=Network";
+	   kline = "PRIVMSG OperServ :AKILL TIME 6h *@%h You have a host listed in the DroneBL. For more information, visit dronebl.org/lookup_branded.do?ip=%i&network=Network";
 	};
 
         /* ircbl.ahbl.org - see http://ahbl.org/docs/ircbl
@@ -324,7 +328,7 @@ OPM {
 #           reply {
 #              2 = "Open proxy";
 #           };
-#           kline = "KLINE 1440 *@%h :Listed in ircbl.ahbl.org. See ahbl.org/removals";
+#           kline = "PRIVMSG OperServ :AKILL TIME 6h *@%h Listed in ircbl.ahbl.org. See ahbl.org/removals";
 #        };
 
          /* tor.dnsbl.sectoor.de - http://www.sectoor.de/tor.php */
@@ -335,7 +339,7 @@ OPM {
               1 = "Tor exit server";
            };
            ban_unknown = no;
-           kline = "KLINE 1440 *@%h :Tor exit server detected. See www.sectoor.de/tor.php?ip=%i";
+           kline = "PRIVMSG OperServ :AKILL TIME 6h *@%h Tor exit server detected. See www.sectoor.de/tor.php?ip=%i";
         };
 
          /* rbl.efnet.org - http://rbl.efnet.org/ */
@@ -350,7 +354,7 @@ OPM {
               5 = "Drones / Flooding";
            };
            ban_unknown = yes;
-           kline = "KLINE 1440 *@%h :Listed in rbl.efnet.org. See rbl.efnet.org/?i=%i";
+           kline = "PRIVMSG OperServ :AKILL TIME 6h *@%h Listed in rbl.efnet.org. See rbl.efnet.org/?i=%i";
         };
 
 
@@ -363,7 +367,7 @@ OPM {
 #	       9 = "Open proxy";
 #	    };
 #	    ban_unknown = no;
-#	    kline = "KLINE 1440 *@%h :Open proxy found on your host, please visit www.njabl.org/cgi-bin/lookup.cgi?query=%i";
+#	    kline = "PRIVMSG OperServ :AKILL TIME 6h *@%h Open proxy found on your host, please visit www.njabl.org/cgi-bin/lookup.cgi?query=%i";
 #	};
 
 	/*
