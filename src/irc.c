@@ -812,12 +812,14 @@ static void m_perform(char **parv, unsigned int parc, char *msg, struct UserInfo
 
    log_printf("IRC -> Connected to %s:%d", IRCItem->server, IRCItem->port);
 
+   /* Oper FIRST: services only populate user->oper from the identify
+      branch, and only if the user is ALREADY umode +o. Identifying
+      before opering leaves the bot at ULEVEL_OPER forever. */
+   irc_send("OPER %s", IRCItem->oper);
+
    /* Identify to nickserv if needed */
    if(strlen(IRCItem->nickserv))
       irc_send("%s", IRCItem->nickserv);
-
-   /* Oper */
-   irc_send("OPER %s", IRCItem->oper);
 
    /* Set modes */
    irc_send("MODE %s %s", IRCItem->nick, IRCItem->mode);
