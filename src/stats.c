@@ -228,7 +228,14 @@ void stats_output(char *target)
    irc_send("PRIVMSG %s :Number of connects: %u (%.2f/minute)",
             target, STATS_CONNECTIONS, STATS_CONNECTIONS ?
             (float)STATS_CONNECTIONS / ((float)uptime / 60.0) : 0.0);
-   irc_send("PRIVMSG %s :We are using \002%s\002", target, (cybon) ? "AKILLs" : "KLINEs");
+   /* Do not name the ban after a variable: what goes out on a positive is one
+    * of two configured command templates, and the "kline" one has been an
+    * OperServ AKILL for years here. Print the template we would really send. */
+   if (cybon && strlen(IRCItem->akill) > 0)
+      irc_send("PRIVMSG %s :On a positive we send to \002%s\002: %s", target,
+            OptionsItem->cybnick, IRCItem->akill);
+   else
+      irc_send("PRIVMSG %s :On a positive we send: %s", target, IRCItem->kline);
 }
 
 

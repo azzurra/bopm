@@ -1225,7 +1225,7 @@ void m_notify_off(char **parv, unsigned int parc, char *msg, struct UserInfo *su
       else
       {
          cybon = 0;
-         log_printf("CybCop is now OFFLINE! I'm gonna adding AKILLs instead of KLINEs");
+         log_printf("CybCop is now OFFLINE! I'm gonna adding KLINEs instead of AKILLs");
          irc_send_channels("\002WARNING:\002: CybCop is offline but host or ident in numeric 605 don't match, please check your config or Q:Lines!");
          irc_send_channels("I was expecting: %s!%s@%s but got %s!%s@%s", OptionsItem->cybnick, OptionsItem->cybident, OptionsItem->cybhost, parv[3], parv[4], parv[5]);
       }
